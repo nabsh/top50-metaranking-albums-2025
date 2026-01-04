@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 50 des meilleurs albums 2025</title>
+    
+    <!-- 1. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. React et ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- 3. Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        ::selection {
+            background-color: black;
+            color: white;
+        }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo } = React;
+
+        // --- ICÔNES (Intégrées directement pour éviter les erreurs de CDN) ---
+        const IconBase = ({ children, ...props }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                {...props}
+            >
+                {children}
+            </svg>
+        );
+
+        const Trophy = (props) => <IconBase {...props}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></IconBase>;
+        const Trash2 = (props) => <IconBase {...props}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></IconBase>;
+        const ExternalLink = (props) => <IconBase {...props}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></IconBase>;
+        const RefreshCw = (props) => <IconBase {...props}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></IconBase>;
+        const Info = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></IconBase>;
+        const Globe = (props) => <IconBase {...props}><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></IconBase>;
+        const ChevronLeft = (props) => <IconBase {...props}><path d="m15 18-6-6 6-6"/></IconBase>;
+        const ChevronRight = (props) => <IconBase {...props}><path d="m9 18 6-6-6-6"/></IconBase>;
+        const Star = (props) => <IconBase {...props}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></IconBase>;
+        const ChevronDown = (props) => <IconBase {...props}><path d="m6 9 6 6 6-6"/></IconBase>;
+
+
+        // --- CONFIGURATION ---
+        const FLAGS = {
+            US: "🇺🇸",
+            UK: "🇬🇧",
+            FR: "🇫🇷",
+            CAN: "🇨🇦"
+        };
+
+        // --- TRADUCTIONS ---
+        const TRANSLATIONS = {
+            fr: {
+                title: "Top 50 des meilleurs albums 2025",
+                subtitle: "Ranking par agrégation de top-50",
+                method_title: "Méthodologie & Démarche",
+                method_text: (count) => (
+                <React.Fragment>
+                    Ce méta-classement agrège {count} sources critiques issues de divers pays (France, Canada, Royaume-Uni, États-Unis). Dans chaque Top-50, le 1er album reçoit 50 points, le second 49 points, etc. On agrège ensuite le total.
+                    <br/><br/>
+                    Bien que l'approche soit quantitative, ce résultat repose sur l'évaluation humaine de journalistes et passionnés, une valeur inestimable à l'ère de l'Intelligence Artificielle. Ce classement reflète nécessairement les biais culturels et éditoriaux des médias sélectionnés. Nous vous encourageons vivement à visiter leurs sites pour découvrir leurs analyses complètes. Si le cœur vous en dit, et le portefeuille le permet, soutenez-les financièrement.
+                </React.Fragment>
+                ),
+                sources_title: "Sources agrégées",
+                reset_btn: "Réinitialiser",
+                rank_col: "Rang",
+                album_col: "Album / Artiste",
+                score_col: "Score",
+                details_col: "Détails",
+                footer: "Nabil Sheikh Hassan (2025), avec l'aide de l'IA pour la mise en œuvre.",
+                page: "Page",
+                of: "sur",
+                score_label: "Points cumulés",
+                mentions_label: "Citations",
+                view_source: "Voir la source",
+                remove_source: "Exclure",
+                no_data: "Aucune donnée disponible. Veuillez réactiver des sources."
+            },
+            en: {
+                title: "Best Albums of 2025",
+                subtitle: "Ranking by Top-50 Aggregation",
+                method_title: "Methodology & Approach",
+                method_text: (count) => (
+                <React.Fragment>
+                    This meta-ranking aggregates {count} critical sources from various countries (France, Canada, UK, USA). In each Top-50, the 1st album receives 50 points, the 2nd 49 points, etc. The totals are then aggregated.
+                    <br/><br/>
+                    Although the approach is quantitative, this result relies on the human evaluation of journalists and enthusiasts—an invaluable asset in the age of Artificial Intelligence. This ranking necessarily reflects the cultural and editorial biases of the selected media. We strongly encourage you to visit their sites to discover their full analyses. If you are willing and able, please support them financially.
+                </React.Fragment>
+                ),
+                sources_title: "Aggregated Sources",
+                reset_btn: "Reset Sources",
+                rank_col: "Rank",
+                album_col: "Album / Artist",
+                score_col: "Score",
+                details_col: "Details",
+                footer: "Nabil Sheikh Hassan (2025), AI-assisted implementation.",
+                page: "Page",
+                of: "of",
+                score_label: "Total Score",
+                mentions_label: "Mentions",
+                view_source: "View Source",
+                remove_source: "Exclude",
+                no_data: "No data available. Please re-enable sources."
+            }
+        };
+
+        // --- DONNÉES ---
+        const INITIAL_LISTS = [
+            {
+                id: 1, source: "Pitchfork", country: "US", url: "https://pitchfork.com/features/lists-and-guides/best-albums-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Los Thuthanaka", album: "Los Thuthanaka" },
+                    { rank: 2, artist: "Dijon", album: "Baby" },
+                    { rank: 3, artist: "Cameron Winter", album: "Heavy Metal" },
+                    { rank: 4, artist: "Oklou", album: "choke enough" },
+                    { rank: 5, artist: "Bad Bunny", album: "DeBÍ TiRAR MáS FOToS" },
+                    { rank: 6, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 7, artist: "Geese", album: "Getting Killed" },
+                    { rank: 8, artist: "Joanne Robertson", album: "Blurrr" },
+                    { rank: 9, artist: "Nourished by Time", album: "The Passionate Ones" },
+                    { rank: 10, artist: "Amaarae", album: "Black Star" },
+                    { rank: 11, artist: "Smerz", album: "Big city life" },
+                    { rank: 12, artist: "Addison Rae", album: "Addison" },
+                    { rank: 13, artist: "Sudan Archives", album: "The BPM" },
+                    { rank: 14, artist: "Barker", album: "Stochastic Drift" },
+                    { rank: 15, artist: "Earl Sweatshirt", album: "Live Laugh Love" },
+                    { rank: 16, artist: "Rosalía", album: "LUX" },
+                    { rank: 17, artist: "Water From Your Eyes", album: "It’s a Beautiful Place" },
+                    { rank: 18, artist: "PinkPantheress", album: "Fancy That" },
+                    { rank: 19, artist: "Titanic", album: "HAGEN" },
+                    { rank: 20, artist: "Nick León", album: "A Tropical Entropy" },
+                    { rank: 21, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 22, artist: "aya", album: "hexed!" },
+                    { rank: 23, artist: "Alex G", album: "Headlights" },
+                    { rank: 24, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 25, artist: "Rochelle Jordan", album: "Through the Wall" },
+                    { rank: 26, artist: "Erika de Casier", album: "Lifetime" },
+                    { rank: 27, artist: "Djrum", album: "Under Tangled Silence" },
+                    { rank: 28, artist: "caroline", album: "caroline 2" },
+                    { rank: 29, artist: "YHWH Nailgun", album: "45 Pounds" },
+                    { rank: 30, artist: "Oneohtrix Point Never", album: "Tranquilizer" },
+                    { rank: 31, artist: "Ryan Davis & the Roadhouse Band", album: "New Threats From the Soul" },
+                    { rank: 32, artist: "WNC WhopBezzy / 70th Street Carlos", album: "Out the Blue" },
+                    { rank: 33, artist: "Ichiko Aoba", album: "Luminescent Creatures" },
+                    { rank: 34, artist: "Lucrecia Dalt", album: "A Danger to Ourselves" },
+                    { rank: 35, artist: "Playboi Carti", album: "MUSIC" },
+                    { rank: 36, artist: "Wet Leg", album: "moisturizer" },
+                    { rank: 37, artist: "Blawan", album: "SickElixir" },
+                    { rank: 38, artist: "Hayden Pedigo", album: "I’ll Be Waving as You Drive Away" },
+                    { rank: 39, artist: "Che", album: "REST IN BASS" },
+                    { rank: 40, artist: "keiyaA", album: "hooke’s law" },
+                    { rank: 41, artist: "KP Skywalka", album: "I Tried to Tell You" },
+                    { rank: 42, artist: "FKA twigs", album: "EUSEXUA" },
+                    { rank: 43, artist: "Panda Bear", album: "Sinister Grift" },
+                    { rank: 44, artist: "Annahstasia", album: "Tether" },
+                    { rank: 45, artist: "MIKE", album: "Showbiz!" },
+                    { rank: 46, artist: "Cleo Reed", album: "Cuntry" },
+                    { rank: 47, artist: "james K", album: "Friend" },
+                    { rank: 48, artist: "Perfume Genius", album: "Glory" },
+                    { rank: 49, artist: "Bassvictim", album: "Forever" },
+                    { rank: 50, artist: "Sharp Pins", album: "Radio DDR" }
+                ]
+            },
+            {
+                id: 2, source: "Flood Magazine", country: "US", url: "https://floodmagazine.com/213711/the-best-albums-of-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Rosalía", album: "Lux" },
+                    { rank: 2, artist: "Geese", album: "Getting Killed" },
+                    { rank: 3, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 4, artist: "Deafheaven", album: "Lonely People with Power" },
+                    { rank: 5, artist: "Dijon", album: "Baby" },
+                    { rank: 6, artist: "Hayley Williams", album: "Ego Death at a Bachelorette Party" },
+                    { rank: 7, artist: "PinkPantheress", album: "Fancy That" },
+                    { rank: 8, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 9, artist: "Sudan Archives", album: "The BPM" },
+                    { rank: 10, artist: "Pulp", album: "More" },
+                    { rank: 11, artist: "Lily Allen", album: "West End Girl" },
+                    { rank: 12, artist: "Earl Sweatshirt", album: "Live Laugh Love" },
+                    { rank: 13, artist: "Deftones", album: "private music" },
+                    { rank: 14, artist: "Stereolab", album: "Instant Hologram on Metal Film" },
+                    { rank: 15, artist: "Militarie Gun", album: "God Save the Gun" },
+                    { rank: 16, artist: "Ghais Guevara", album: "Goyard Ibn Said" },
+                    { rank: 17, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 18, artist: "FKA twigs", album: "Eusexua" },
+                    { rank: 19, artist: "Blondshell", album: "If You Asked for a Picture" },
+                    { rank: 20, artist: "Bad Bunny", album: "DeBÍ TiRAR MáS FOToS" },
+                    { rank: 21, artist: "S.G. Goodman", album: "Planting by the Signs" },
+                    { rank: 22, artist: "Horsegirl", album: "Phonetics On and On" },
+                    { rank: 23, artist: "Lambrini Girls", album: "Who Let the Dogs Out" },
+                    { rank: 24, artist: "Saba & No I.D.", album: "From the Private Collection of Saba & No I.D." },
+                    { rank: 25, artist: "Lucy Dacus", album: "Forever Is a Feeling" },
+                    { rank: 26, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 27, artist: "Perfume Genius", album: "Glory" },
+                    { rank: 28, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 29, artist: "Agriculture", album: "The Spiritual Sound" },
+                    { rank: 30, artist: "Sharon Van Etten & the Attachment Theory", album: "Sharon Van Etten & the Attachment Theory" },
+                    { rank: 31, artist: "Model/Actriz", album: "Pirouette" },
+                    { rank: 32, artist: "Tyler, the Creator", album: "Don’t Tap the Glass" },
+                    { rank: 33, artist: "Little Simz", album: "Lotus" },
+                    { rank: 34, artist: "Japanese Breakfast", album: "For Melancholy Brunettes (& sad women)" },
+                    { rank: 35, artist: "Ethel Cain", album: "Perverts" },
+                    { rank: 36, artist: "Garbage", album: "Let All That We Imagine Be the Light" },
+                    { rank: 37, artist: "Backxwash", album: "Only Dust Remains" },
+                    { rank: 38, artist: "Momma", album: "Welcome to My Blue Sky" },
+                    { rank: 39, artist: "The Armed", album: "The Future Is Here and Everything Needs to Be Destroyed" },
+                    { rank: 40, artist: "Suede", album: "Antidepressants" },
+                    { rank: 41, artist: "La Dispute", album: "No One Was Driving the Car" },
+                    { rank: 42, artist: "Blawan", album: "SickElixir" },
+                    { rank: 43, artist: "CMAT", album: "Euro-Country" },
+                    { rank: 44, artist: "Die Spitz", album: "Something to Consume" },
+                    { rank: 45, artist: "Wolf Alice", album: "The Clearing" },
+                    { rank: 46, artist: "Jensen McRae", album: "I Don’t Know How but They Found Me!" },
+                    { rank: 47, artist: "Purity Ring", album: "Purity Ring" },
+                    { rank: 48, artist: "Julien Baker & TORRES", album: "Send a Prayer My Way" },
+                    { rank: 49, artist: "Folk Bitch Trio", album: "Now Would Be a Good Time" },
+                    { rank: 50, artist: "Benjamin Booker", album: "Lower" }
+                ]
+            },
+            {
+                id: 3, source: "NME", country: "UK", url: "https://www.nme.com/lists/end-of-year/best-albums-2025-3915561", weight: 50,
+                data: [
+                    { rank: 1, artist: "Geese", album: "Getting Killed" },
+                    { rank: 2, artist: "Addison Rae", album: "Addison" },
+                    { rank: 3, artist: "FKA Twigs", album: "Eusexua" },
+                    { rank: 4, artist: "CMAT", album: "Euro-Country" },
+                    { rank: 5, artist: "Bad Bunny", album: "Debí Tirar Más Fotos" },
+                    { rank: 6, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 7, artist: "Rosalía", album: "Lux" },
+                    { rank: 8, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 9, artist: "Hayley Williams", album: "Ego Death at a Bachelorette Party" },
+                    { rank: 10, artist: "PinkPantheress", album: "Fancy That" },
+                    { rank: 11, artist: "Wolf Alice", album: "The Clearing" },
+                    { rank: 12, artist: "Amaarae", album: "Black Star" },
+                    { rank: 13, artist: "Lily Allen", album: "West End Girl" },
+                    { rank: 14, artist: "Jim Legxacy", album: "Black British Music (2025)" },
+                    { rank: 15, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 16, artist: "Pulp", album: "More" },
+                    { rank: 17, artist: "JADE", album: "That’s Showbiz, Baby!" },
+                    { rank: 18, artist: "Olivia Dean", album: "The Art of Loving" },
+                    { rank: 19, artist: "Lady Gaga", album: "Mayhem" },
+                    { rank: 20, artist: "Sam Fender", album: "People Watching" },
+                    { rank: 21, artist: "Deftones", album: "Private Music" },
+                    { rank: 22, artist: "Wet Leg", album: "Moisturizer" },
+                    { rank: 23, artist: "YHWH Nailgun", album: "45 Pounds" },
+                    { rank: 24, artist: "Lorde", album: "Virgin" },
+                    { rank: 25, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 26, artist: "Big Thief", album: "Double Infinity" },
+                    { rank: 27, artist: "Florence + the Machine", album: "Everybody Scream" },
+                    { rank: 28, artist: "Nourished by Time", album: "The Passionate Ones" },
+                    { rank: 29, artist: "The Last Dinner Party", album: "From The Pyre" },
+                    { rank: 30, artist: "Annahstasia", album: "Tether" },
+                    { rank: 31, artist: "Spiritbox", album: "Tsunami Sea" },
+                    { rank: 32, artist: "Lambrini Girls", album: "Who Let The Dogs Out" },
+                    { rank: 33, artist: "Dijon", album: "Baby" },
+                    { rank: 34, artist: "Wretch 32", album: "Home?" },
+                    { rank: 35, artist: "Haim", album: "I Quit" },
+                    { rank: 36, artist: "Folk Bitch Trio", album: "Now Would Be a Good Time" },
+                    { rank: 37, artist: "Rochelle Jordan", album: "Through the Wall" },
+                    { rank: 38, artist: "Tyler, the Creator", album: "Don’t Tap The Glass" },
+                    { rank: 39, artist: "Maruja", album: "Pain to Power" },
+                    { rank: 40, artist: "Vlure", album: "Escalate" },
+                    { rank: 41, artist: "Knucks", album: "A Fine African Man" },
+                    { rank: 42, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 43, artist: "Erika de Casier", album: "Lifetime" },
+                    { rank: 44, artist: "Samia", album: "Bloodless" },
+                    { rank: 45, artist: "Denzel Himself", album: "Violator" },
+                    { rank: 46, artist: "Ethel Cain", album: "Willoughby Tucker, I’ll Always Love You" },
+                    { rank: 47, artist: "Rose Gray", album: "Louder, Please" },
+                    { rank: 48, artist: "EsDeeKid", album: "Rebel" },
+                    { rank: 49, artist: "NMIXX", album: "Blue Valentine" },
+                    { rank: 50, artist: "Viagra Boys", album: "Viagr Aboys" }
+                ]
+            },
+            {
+                id: 4, source: "Rolling Stone", country: "US", url: "https://www.rollingstone.com/music/music-lists/best-albums-of-2025-1235466292/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Bad Bunny", album: "Debí Tirar Más Fotos" },
+                    { rank: 2, artist: "Lady Gaga", album: "Mayhem" },
+                    { rank: 3, artist: "Rosalía", album: "Lux" },
+                    { rank: 4, artist: "Dijon", album: "Baby" },
+                    { rank: 5, artist: "Geese", album: "Getting Killed" },
+                    { rank: 6, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 7, artist: "Tyler Childers", album: "Snipe Hunter" },
+                    { rank: 8, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 9, artist: "Hayley Williams", album: "Ego Death at a Bachelorette Party" },
+                    { rank: 10, artist: "Playboi Carti", album: "Music" },
+                    { rank: 11, artist: "FKA Twigs", album: "EUSEXUA" },
+                    { rank: 12, artist: "Addison Rae", album: "Addison" },
+                    { rank: 13, artist: "Sabrina Carpenter", album: "Man’s Best Friend" },
+                    { rank: 14, artist: "Earl Sweatshirt", album: "Live Laugh Love" },
+                    { rank: 15, artist: "Taylor Swift", album: "The Life of a Showgirl" },
+                    { rank: 16, artist: "Silvana Estrada", album: "Vendrán Suaves Lluvias" },
+                    { rank: 17, artist: "Billy Woods", album: "Golliwog" },
+                    { rank: 18, artist: "Carter Faith", album: "Cherry Valley" },
+                    { rank: 19, artist: "Olivia Dean", album: "The Art of Loving" },
+                    { rank: 20, artist: "Justin Bieber", album: "Swag" },
+                    { rank: 21, artist: "Lifeguard", album: "Ripped and Torn" },
+                    { rank: 22, artist: "Jade", album: "That’s Showbiz Baby!" },
+                    { rank: 23, artist: "Pinkpantheress", album: "Fancy That" },
+                    { rank: 24, artist: "Teyana Taylor", album: "Escape Room" },
+                    { rank: 25, artist: "Florence + the Machine", album: "Everybody Scream" },
+                    { rank: 26, artist: "Eric Church", album: "Evangeline vs. the Machine" },
+                    { rank: 27, artist: "Sarz", album: "Protect Sarz at All Costs" },
+                    { rank: 28, artist: "Jeff Tweedy", album: "Twilight Override" },
+                    { rank: 29, artist: "Jennie", album: "Ruby" },
+                    { rank: 30, artist: "Lorde", album: "Virgin" },
+                    { rank: 31, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 32, artist: "Cameron Winter", album: "Heavy Metal" },
+                    { rank: 33, artist: "Lily Allen", album: "West End Girl" },
+                    { rank: 34, artist: "Karol G", album: "Tropicoqueta" },
+                    { rank: 35, artist: "Haim", album: "I Quit" },
+                    { rank: 36, artist: "Snocaps", album: "Snocaps" },
+                    { rank: 37, artist: "Amaarae", album: "Black Star" },
+                    { rank: 38, artist: "Jim Legxacy", album: "Black British Music" },
+                    { rank: 39, artist: "Horsegirl", album: "Phonetics On and On" },
+                    { rank: 40, artist: "Charley Crockett", album: "Dollar a Day" },
+                    { rank: 41, artist: "Pulp", album: "More" },
+                    { rank: 42, artist: "Nourished by Time", album: "The Passionate Ones" },
+                    { rank: 43, artist: "Japanese Breakfast", album: "For Melancholy Brunettes (& Sad Women)" },
+                    { rank: 44, artist: "Zara Larsson", album: "Midnight Sun" },
+                    { rank: 45, artist: "Little Simz", album: "Lotus" },
+                    { rank: 46, artist: "Guitarricadelafuente", album: "Spanish Leather" },
+                    { rank: 47, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 48, artist: "Not for Radio", album: "Melt" },
+                    { rank: 49, artist: "Lola Young", album: "I’m Only F**king Myself" },
+                    { rank: 50, artist: "Fuerza Regida", album: "111Xpantia" }
+                ]
+            },
+            {
+                id: 5, source: "Mowno", country: "FR", url: "https://www.mowno.com/articles/selection/bilan-2025-les-meilleurs-albums-et-morceaux-de-lannee/", weight: 50,
+                data: [
+                    { rank: 1, artist: "GEESE", album: "Getting Killed" },
+                    { rank: 2, artist: "VIAGRA BOYS", album: "Viagr Aboys" },
+                    { rank: 3, artist: "BRUIT ≤", album: "The Age of Ephemerality" },
+                    { rank: 4, artist: "CAROLINE", album: "Caroline 2" },
+                    { rank: 5, artist: "VENTURA", album: "Superheld" },
+                    { rank: 6, artist: "ARTHUR SATAN", album: "A Journey That Never Was" },
+                    { rank: 7, artist: "SWANS", album: "Birthing" },
+                    { rank: 8, artist: "PILE", album: "Sunshine and Balance Beams" },
+                    { rank: 9, artist: "CHAT PILE & HAYDEN PEDIGO", album: "In The Earth Again" },
+                    { rank: 10, artist: "BLACK COUNTRY, NEW ROAD", album: "Forever Howlong" },
+                    { rank: 11, artist: "MARUJA", album: "Pain to Power" },
+                    { rank: 12, artist: "DITZ", album: "Never Exhale" },
+                    { rank: 13, artist: "WATER FROM YOUR EYES", album: "It’s a Beautiful Place" },
+                    { rank: 14, artist: "FRAGILE", album: "Big Big Smile" },
+                    { rank: 15, artist: "ANDREA LASZLO DE SIMONE", album: "Una Lunghissima Ombra" },
+                    { rank: 16, artist: "PAIN MAGAZINE", album: "Violent God" },
+                    { rank: 17, artist: "LÚLÚ", album: "Lúlú" },
+                    { rank: 18, artist: "TROPICAL FUCK STORM", album: "Fairyland Codex" },
+                    { rank: 19, artist: "ELLAH A. THAUN", album: "The Seminal Record of..." },
+                    { rank: 20, artist: "BIG THIEF", album: "Double Infinity" },
+                    { rank: 21, artist: "FOXWARREN", album: "2" },
+                    { rank: 22, artist: "TVOD", album: "Party Time" },
+                    { rank: 23, artist: "ADRIANNE LENKER", album: "Live at Revolution Hall" },
+                    { rank: 24, artist: "PERFUME GENIUS", album: "Glory" },
+                    { rank: 25, artist: "ROSALÍA", album: "Lux" },
+                    { rank: 26, artist: "ANNA VON HAUSSWOLFF", album: "Iconoclasts" },
+                    { rank: 27, artist: "WET LEG", album: "Moisturizer" },
+                    { rank: 28, artist: "UNIVERSITY", album: "McCartney, It’ll Be Ok" },
+                    { rank: 29, artist: "DEFTONES", album: "Private Music" },
+                    { rank: 30, artist: "TURNSTILE", album: "Never Enough" },
+                    { rank: 31, artist: "CASS MCCOMBS", album: "Interior Live Oak" },
+                    { rank: 32, artist: "ELIZABETH VOGLER", album: "Au Nom Deus Asos" },
+                    { rank: 33, artist: "THE SPITTERS", album: "Fake Brutal" },
+                    { rank: 34, artist: "NATION OF LANGUAGE", album: "Dance Called Memory" },
+                    { rank: 35, artist: "FACS", album: "Wish Defense" },
+                    { rank: 36, artist: "LILA SOBER", album: "Different Drums" },
+                    { rank: 37, artist: "REST UP", album: "Real Sensations" },
+                    { rank: 38, artist: "THE ARMED", album: "The Future Is Here and Everything Needs to Be Destroyed" },
+                    { rank: 39, artist: "JESSICA93", album: "666 Tours de Périph’" },
+                    { rank: 40, artist: "THE ANTLERS", album: "Blight" },
+                    { rank: 41, artist: "YHWH NAILGUN", album: "45 Pounds" },
+                    { rank: 42, artist: "SORRY", album: "Cosplay" },
+                    { rank: 43, artist: "DARKSIDE", album: "Nothing" },
+                    { rank: 44, artist: "ELIZABETH A. CARVER", album: "The Cart Before The Horse" },
+                    { rank: 45, artist: "SPRINTS", album: "All That Is Over" },
+                    { rank: 46, artist: "HUREMIC", album: "Seeking Darkness" },
+                    { rank: 47, artist: "MCLUSKY", album: "The World Is Still Here And So Are We" },
+                    { rank: 48, artist: "CAMILLA SPARKSSS", album: "Icu Run" },
+                    { rank: 49, artist: "BDRMM", album: "Microtonic" },
+                    { rank: 50, artist: "HEARTWORMS", album: "Glutton For Punishment" }
+                ]
+            },
+            {
+                id: 6, source: "The Guardian", country: "UK", url: "https://www.theguardian.com/music/ng-interactive/2025/dec/08/the-best-albums-of-2025-50-41", weight: 50,
+                data: [
+                    { rank: 1, artist: "Rosalía", album: "Lux" },
+                    { rank: 2, artist: "CMAT", album: "Euro-Country" },
+                    { rank: 3, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 4, artist: "Addison Rae", album: "Addison" },
+                    { rank: 5, artist: "Lady Gaga", album: "Mayhem" },
+                    { rank: 6, artist: "PinkPantheress", album: "Fancy That" },
+                    { rank: 7, artist: "Lily Allen", album: "West End Girl" },
+                    { rank: 8, artist: "Bad Bunny", album: "Debí Tirar Más Fotos" },
+                    { rank: 9, artist: "Geese", album: "Getting Killed" },
+                    { rank: 10, artist: "Billy Woods", album: "Golliwog" },
+                    { rank: 11, artist: "Jade", album: "That’s Showbiz Baby!" },
+                    { rank: 12, artist: "Jim Legxacy", album: "Black British Music (2025)" },
+                    { rank: 13, artist: "Suede", album: "Antidepressants" },
+                    { rank: 14, artist: "Deftones", album: "Private Music" },
+                    { rank: 15, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 16, artist: "Pulp", album: "More" },
+                    { rank: 17, artist: "Alex G", album: "Headlights" },
+                    { rank: 18, artist: "Big Thief", album: "Double Infinity" },
+                    { rank: 19, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 20, artist: "Aya", album: "Hexed!" },
+                    { rank: 21, artist: "John Glacier", album: "Like a Ribbon" },
+                    { rank: 22, artist: "Little Simz", album: "Lotus" },
+                    { rank: 23, artist: "Cate Le Bon", album: "Michelangelo Dying" },
+                    { rank: 24, artist: "Titanic", album: "Hagen" },
+                    { rank: 25, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 26, artist: "Wolf Alice", album: "The Clearing" },
+                    { rank: 27, artist: "Wet Leg", album: "Moisturizer" },
+                    { rank: 28, artist: "KeiyaA", album: "Hooke’s Law" },
+                    { rank: 29, artist: "Jacob Alon", album: "In Limerence" },
+                    { rank: 30, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 31, artist: "Horsegirl", album: "Phonetics On and On" },
+                    { rank: 32, artist: "Perfume Genius", album: "Glory" },
+                    { rank: 33, artist: "Amaarae", album: "Black Star" },
+                    { rank: 34, artist: "Snocaps", album: "Snocaps" },
+                    { rank: 35, artist: "Bon Iver", album: "Sable, Fable" },
+                    { rank: 36, artist: "Anna von Hausswolff", album: "Iconoclasts" },
+                    { rank: 37, artist: "Olivia Dean", album: "The Art of Loving" },
+                    { rank: 38, artist: "Ethel Cain", album: "Willoughby Tucker, I’ll Always Love You" },
+                    { rank: 39, artist: "Sudan Archives", album: "The BPM" },
+                    { rank: 40, artist: "YHWH Nailgun", album: "45 Pounds" },
+                    { rank: 41, artist: "Danny Brown", album: "Stardust" },
+                    { rank: 42, artist: "Erika de Casier", album: "Lifetime" },
+                    { rank: 43, artist: "Jennifer Walton", album: "Daughters" },
+                    { rank: 44, artist: "Sabrina Carpenter", album: "Man’s Best Friend" },
+                    { rank: 45, artist: "Smerz", album: "Big City Life" },
+                    { rank: 46, artist: "The Tubs", album: "Cotton Crown" },
+                    { rank: 47, artist: "Clipping", album: "Dead Channel Sky" },
+                    { rank: 48, artist: "Jerskin Fendrix", album: "Once Upon a Time … in Shropshire" },
+                    { rank: 49, artist: "Rochelle Jordan", album: "Through the Wall" },
+                    { rank: 50, artist: "Nourished by Time", album: "The Passionate Ones" }
+                ]
+            },
+            {
+                id: 7, source: "Exclaim", country: "CAN", url: "https://exclaim.ca/music/article/exclaim-s-50-best-albums-of-2025", weight: 50,
+                data: [
+                    { rank: 1, artist: "Ribbon Skirt", album: "Bite Down" },
+                    { rank: 2, artist: "Geese", album: "Getting Killed" },
+                    { rank: 3, artist: "PinkPantheress", album: "Fancy That" },
+                    { rank: 4, artist: "Turnstile", album: "NEVER ENOUGH" },
+                    { rank: 5, artist: "Saya Gray", album: "SAYA" },
+                    { rank: 6, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 7, artist: "Hayley Williams", album: "Ego Death at a Bachelorette Party" },
+                    { rank: 8, artist: "Deafheaven", album: "Lonely People with Power" },
+                    { rank: 9, artist: "Rosalía", album: "LUX" },
+                    { rank: 10, artist: "Slash Need", album: "SIT & GRIN" },
+                    { rank: 11, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 12, artist: "Olivia Dean", album: "The Art of Loving" },
+                    { rank: 13, artist: "Dijon", album: "Baby" },
+                    { rank: 14, artist: "Wet Leg", album: "moisturizer" },
+                    { rank: 15, artist: "Tyler, the Creator", album: "DON'T TAP THE GLASS" },
+                    { rank: 16, artist: "PUP", album: "Who Will Look After the Dogs?" },
+                    { rank: 17, artist: "Oklou", album: "choke enough" },
+                    { rank: 18, artist: "Men I Trust", album: "Equus Caballus" },
+                    { rank: 19, artist: "Alex G", album: "Headlights" },
+                    { rank: 20, artist: "Ninajirachi", album: "I Love My Computer" },
+                    { rank: 21, artist: "Agriculture", album: "The Spiritual Sound" },
+                    { rank: 22, artist: "Water from Your Eyes", album: "It's a Beautiful Place" },
+                    { rank: 23, artist: "Perfume Genius", album: "Glory" },
+                    { rank: 24, artist: "Lorde", album: "Virgin" },
+                    { rank: 25, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 26, artist: "Emma Goldman", album: "all you are is we" },
+                    { rank: 27, artist: "Bad Bunny", album: "DeBÍ TiRAR MáS FOToS" },
+                    { rank: 28, artist: "FKA twigs", album: "EUSEXUA" },
+                    { rank: 29, artist: "Earl Sweatshirt", album: "Live Laugh Love" },
+                    { rank: 30, artist: "Lambrini Girls", album: "Who Let the Dogs Out" },
+                    { rank: 31, artist: "Deftones", album: "private music" },
+                    { rank: 32, artist: "Nourished by Time", album: "The Passionate Ones" },
+                    { rank: 33, artist: "Freddie Gibbs and the Alchemist", album: "Alfredo 2" },
+                    { rank: 34, artist: "Leanne Betasamosake Simpson", album: "Live Like the Sky" },
+                    { rank: 35, artist: "Spiritbox", album: "Tsunami Sea" },
+                    { rank: 36, artist: "Lily Allen", album: "West End Girl" },
+                    { rank: 37, artist: "SUMAC and Moor Mother", album: "The Film" },
+                    { rank: 38, artist: "Sammy Virji", album: "Same Day Cleaning" },
+                    { rank: 39, artist: "The Armed", album: "THE FUTURE IS HERE AND EVERYTHING NEEDS TO BE DESTROYED" },
+                    { rank: 40, artist: "Model/Actriz", album: "Pirouette" },
+                    { rank: 41, artist: "Population II", album: "Maintenant Jamais" },
+                    { rank: 42, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 43, artist: "They Are Gutting a Body of Water", album: "LOTTO" },
+                    { rank: 44, artist: "Saba and No ID", album: "From the Private Collection of Saba and No ID" },
+                    { rank: 45, artist: "Greet Death", album: "Die in Love" },
+                    { rank: 46, artist: "Julianna Riolino", album: "Echo in the Dust" },
+                    { rank: 47, artist: "Kaytranada", album: "AIN'T NO DAMN WAY!" },
+                    { rank: 48, artist: "Great Grandpa", album: "Patience, Moonbeam" },
+                    { rank: 49, artist: "Stereolab", album: "Instant Holograms on Metal Film" },
+                    { rank: 50, artist: "Addison Rae", album: "Addison" }
+                ]
+            },
+            {
+                id: 8, source: "Range", country: "CAN", url: "https://readrange.com/top-50-canadian-albums-of-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Rochelle Jordan", album: "Through The Wall" },
+                    { rank: 2, artist: "Bells Larsen", album: "Blurring Time" },
+                    { rank: 3, artist: "Yves Jarvis", album: "All Cylinders" },
+                    { rank: 4, artist: "Home Front", album: "Watch It Die" },
+                    { rank: 5, artist: "The Weather Station", album: "Humanhood" },
+                    { rank: 6, artist: "Shad", album: "Start Anew" },
+                    { rank: 7, artist: "Ribbon Skirt", album: "Bite Down" },
+                    { rank: 8, artist: "U.S. Girls", album: "Scratch It" },
+                    { rank: 9, artist: "9Million", album: "9Million" },
+                    { rank: 10, artist: "KAYTRANADA", album: "AIN'T NO DAMN WAY!" },
+                    { rank: 11, artist: "Alix Fernz", album: "Symphonie publicitaire sous influence" },
+                    { rank: 12, artist: "Foxwarren", album: "2" },
+                    { rank: 13, artist: "Goldie Boutilier", album: "Goldie Boutilier Presents… Goldie Montana" },
+                    { rank: 14, artist: "Dan Mangan", album: "Natural Light" },
+                    { rank: 15, artist: "Tate McRae", album: "So Close To What" },
+                    { rank: 16, artist: "Men I Trust", album: "Equus Asinus" },
+                    { rank: 17, artist: "The Weeknd", album: "Hurry Up Tomorrow" },
+                    { rank: 18, artist: "Georgia Harmer", album: "Eye Of The Storm" },
+                    { rank: 19, artist: "Sebastian Gaskin", album: "LOVECHILD" },
+                    { rank: 20, artist: "Debby Friday", album: "The Starrr Of The Queen Of Life" },
+                    { rank: 21, artist: "Aysanabee", album: "Edge of the Earth" },
+                    { rank: 22, artist: "Destroyer", album: "Dan's Boogie" },
+                    { rank: 23, artist: "Sloan", album: "Based On The Best Seller" },
+                    { rank: 24, artist: "Altameda", album: "Crazy Blue" },
+                    { rank: 25, artist: "Art d'Ecco", album: "Serene Demon" },
+                    { rank: 26, artist: "DillanPonders", album: "DARK TIMES 2" },
+                    { rank: 27, artist: "young friend", album: "motorcycle sound effects" },
+                    { rank: 28, artist: "Marlaena Moore", album: "Because You Love Everything" },
+                    { rank: 29, artist: "Jane Inc.", album: "A RUPTURE A CANYON A BIRTH" },
+                    { rank: 30, artist: "Computer", album: "Station on the Hill" },
+                    { rank: 31, artist: "Motherhood", album: "Thunder Perfect Mind" },
+                    { rank: 32, artist: "Yukon Blonde", album: "Friendship and Rock N Roll" },
+                    { rank: 33, artist: "Charlie Houston", album: "Big After I Die" },
+                    { rank: 34, artist: "Daniel Caesar", album: "Son of Spergy" },
+                    { rank: 35, artist: "Cassidy Waring", album: "If I Had Only Been Better" },
+                    { rank: 36, artist: "Ada Lea", album: "when i paint my masterpiece" },
+                    { rank: 37, artist: "Fionn", album: "Scum" },
+                    { rank: 38, artist: "Tommy Genesis", album: "Genesis" },
+                    { rank: 39, artist: "Mac DeMarco", album: "guitar" },
+                    { rank: 40, artist: "Sarah McLachlan", album: "Better Broken" },
+                    { rank: 41, artist: "Kyle Wildfern", album: "What A Life!" },
+                    { rank: 42, artist: "The Beaches", album: "No Hard Feelings" },
+                    { rank: 43, artist: "Jessie Reyez", album: "Paid in Memories" },
+                    { rank: 44, artist: "Gloin", album: "All of Your Anger Is Actually Shame (And I Bet That Makes You Angry)" },
+                    { rank: 45, artist: "Aqyila", album: "Falling Into Place" },
+                    { rank: 46, artist: "Sean Nicholas Savage", album: "The Knowing" },
+                    { rank: 47, artist: "JayWood", album: "LeoNegro" },
+                    { rank: 48, artist: "Johnny 99", album: "Mr. Lonely" },
+                    { rank: 49, artist: "Finn Wolfhard", album: "Happy Birthday" },
+                    { rank: 50, artist: "bbno$", album: "bbno$" }
+                ]
+            },
+            {
+                id: 9, source: "The Line of Best Fit", country: "UK", url: "https://www.thelineofbestfit.com/features/articles/2025-best-albums-ranked", weight: 50,
+                data: [
+                    { rank: 1, artist: "Anna von Hausswolff", album: "Iconoclasts" },
+                    { rank: 2, artist: "Rosalía", album: "Lux" },
+                    { rank: 3, artist: "Geese", album: "Getting Killed" },
+                    { rank: 4, artist: "Jim Legxacy", album: "Black British Music" },
+                    { rank: 5, artist: "Ninajirachi", album: "I Love My Computer" },
+                    { rank: 6, artist: "Hayley Williams", album: "Ego Death At A Bachelorette Party" },
+                    { rank: 7, artist: "Perfume Genius", album: "Glory" },
+                    { rank: 8, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 9, artist: "jasmine.4.t", album: "You Are The Morning" },
+                    { rank: 10, artist: "keiyaA", album: "Hooke’s Law" },
+                    { rank: 11, artist: "Bad Bunny", album: "DeBÍ TiRAR MáS FOToS" },
+                    { rank: 12, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 13, artist: "Silvana Estrada", album: "Vendrán Suaves Lluvias" },
+                    { rank: 14, artist: "Nourished by Time", album: "The Passionate Ones" },
+                    { rank: 15, artist: "PinkPantheress", album: "Fancy That" },
+                    { rank: 16, artist: "caroline", album: "caroline 2" },
+                    { rank: 17, artist: "Smerz", album: "Big city life" },
+                    { rank: 18, artist: "John Glacier", album: "Like a Ribbon" },
+                    { rank: 19, artist: "Maruja", album: "Pain to Power" },
+                    { rank: 20, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 21, artist: "Benefits", album: "Constant Noise" },
+                    { rank: 22, artist: "Ethel Cain", album: "Perverts" },
+                    { rank: 23, artist: "Cryogeyser", album: "Cryogeyser" },
+                    { rank: 24, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 25, artist: "Shlohmo", album: "REPULSOR" },
+                    { rank: 26, artist: "Saya Gray", album: "SAYA" },
+                    { rank: 27, artist: "FKA twigs", album: "EUSEXUA" },
+                    { rank: 28, artist: "Ryan Davis & The Roadhouse Band", album: "New Threats From the Soul" },
+                    { rank: 29, artist: "Yung Lean", album: "Jonatan" },
+                    { rank: 30, artist: "S.G. Goodman", album: "Planting By The Signs" },
+                    { rank: 31, artist: "Ichiko Aoba", album: "Luminescent Creatures" },
+                    { rank: 32, artist: "Die Spitz", album: "Something to Consume" },
+                    { rank: 33, artist: "Makaya McCraven", album: "Off the Record" },
+                    { rank: 34, artist: "Zara Larsson", album: "Midnight Sun" },
+                    { rank: 35, artist: "Deftones", album: "Private Music" },
+                    { rank: 36, artist: "Little Simz", album: "Lotus" },
+                    { rank: 37, artist: "Tony Njoku", album: "All Our Knives Are Always Sharp" },
+                    { rank: 38, artist: "Viagra Boys", album: "Viagr Aboys" },
+                    { rank: 39, artist: "Samia", album: "Bloodless" },
+                    { rank: 40, artist: "The Armed", album: "The Future Is Here and Everything Needs to Be Destroyed" },
+                    { rank: 41, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 42, artist: "Jenny Hval", album: "Iris Silver Mist" },
+                    { rank: 43, artist: "crushed", album: "no scope" },
+                    { rank: 44, artist: "Lambrini Girls", album: "Who Let the Dogs Out" },
+                    { rank: 45, artist: "Sharon Van Etten & The Attachment Theory", album: "Sharon Van Etten & The Attachment Theory" },
+                    { rank: 46, artist: "Kara-Lis Coverdale", album: "A Series of Actions in a Sphere of Forever" },
+                    { rank: 47, artist: "Ethel Cain", album: "Willoughby Tucker, I’ll Always Love You" },
+                    { rank: 48, artist: "HONESTY", album: "U R Here" },
+                    { rank: 49, artist: "Lily Allen", album: "West End Girl" },
+                    { rank: 50, artist: "Addison Rae", album: "Addison" }
+                ]
+            },
+            {
+                id: 10, source: "Treble", country: "US", url: "https://www.treblezine.com/the-50-best-albums-of-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 2, artist: "Deafheaven", album: "Lonely People With Power" },
+                    { rank: 3, artist: "FKA twigs", album: "EUSEXUA" },
+                    { rank: 4, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 5, artist: "The Armed", album: "THE FUTURE IS HERE AND EVERYTHING NEEDS TO BE DESTROYED" },
+                    { rank: 6, artist: "Agriculture", album: "The Spiritual Sound" },
+                    { rank: 7, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 8, artist: "Deftones", album: "private music" },
+                    { rank: 9, artist: "Sudan Archives", album: "The BPM" },
+                    { rank: 10, artist: "Lucrecia Dalt", album: "A Danger to Ourselves" },
+                    { rank: 11, artist: "Chat Pile and Hayden Pedigo", album: "In the Earth Again" },
+                    { rank: 12, artist: "Earl Sweatshirt", album: "Live Laugh Love" },
+                    { rank: 13, artist: "Geese", album: "Getting Killed" },
+                    { rank: 14, artist: "Armand Hammer & The Alchemist", album: "Mercy" },
+                    { rank: 15, artist: "Model/Actriz", album: "Pirouette" },
+                    { rank: 16, artist: "Eli Winter", album: "A Trick of the Light" },
+                    { rank: 17, artist: "Greet Death", album: "Die in Love" },
+                    { rank: 18, artist: "Hannah Frances", album: "Nested in Tangles" },
+                    { rank: 19, artist: "Circuit des Yeux", album: "Halo on the Inside" },
+                    { rank: 20, artist: "Sumac and Moor Mother", album: "The Film" },
+                    { rank: 21, artist: "Jim Ghedi", album: "Wasteland" },
+                    { rank: 22, artist: "Messa", album: "The Spin" },
+                    { rank: 23, artist: "Mary Halvorson", album: "About Ghosts" },
+                    { rank: 24, artist: "Lifeguard", album: "Ripped and Torn" },
+                    { rank: 25, artist: "Cate Le Bon", album: "Michelangelo Dying" },
+                    { rank: 26, artist: "Nourished by Time", album: "The Passionate Ones" },
+                    { rank: 27, artist: "Annahstasia", album: "Tether" },
+                    { rank: 28, artist: "DJ Haram", album: "Beside Myself" },
+                    { rank: 29, artist: "Jason Isbell", album: "Foxes in the Snow" },
+                    { rank: 30, artist: "Hotline TNT", album: "Raspberry Moon" },
+                    { rank: 31, artist: "Viagra Boys", album: "viagr aboys" },
+                    { rank: 32, artist: "Margo Price", album: "Hard Headed Woman" },
+                    { rank: 33, artist: "The Necks", album: "Disquiet" },
+                    { rank: 34, artist: "Open Mike Eagle", album: "Neighborhood Gods Unlimited" },
+                    { rank: 35, artist: "No Joy", album: "Bugland" },
+                    { rank: 36, artist: "Tyler Childers", album: "Snipe Hunter" },
+                    { rank: 37, artist: "Preservation & Gabe ‘Nandez", album: "Sortilège" },
+                    { rank: 38, artist: "Sharon Van Etten & the Attachment Theory", album: "Sharon Van Etten & the Attachment Theory" },
+                    { rank: 39, artist: "Cloakroom", album: "Last Leg of the Human Table" },
+                    { rank: 40, artist: "ShrapKnel", album: "Lincoln Continental Breakfast/Saisir le feu/Armature" },
+                    { rank: 41, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 42, artist: "HAIM", album: "I Quit" },
+                    { rank: 43, artist: "Backxwash", album: "Only Dust Remains" },
+                    { rank: 44, artist: "Rochelle Jordan", album: "Through the Wall" },
+                    { rank: 45, artist: "Djrum", album: "Under Tangled Silence" },
+                    { rank: 46, artist: "SML", album: "How You Been" },
+                    { rank: 47, artist: "Ichiko Aoba", album: "Luminescent Creatures" },
+                    { rank: 48, artist: "Pile", album: "Sunshine and Balance Beams" },
+                    { rank: 49, artist: "Barker", album: "Stochastic Drift" },
+                    { rank: 50, artist: "Home Front", album: "Watch It Die" }
+                ]
+            },
+            {
+                id: 11, source: "Slant Magazine", country: "US", url: "https://www.slantmagazine.com/music/the-50-best-albums-of-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "FKA twigs", album: "Eusexua" },
+                    { rank: 2, artist: "Cameron Winter", album: "Heavy Metal" },
+                    { rank: 3, artist: "Skrillex", album: "Fuck U Skrillex You Think Ur Andy Warhol but Ur Not!!" },
+                    { rank: 4, artist: "Geese", album: "Getting Killed" },
+                    { rank: 5, artist: "Addison Rae", album: "Addison" },
+                    { rank: 6, artist: "Tyler Childers", album: "Snipe Hunter" },
+                    { rank: 7, artist: "Sudan Archives", album: "The BPM" },
+                    { rank: 8, artist: "Dijon", album: "Baby" },
+                    { rank: 9, artist: "Jane Remover", album: "Revengeseekerz" },
+                    { rank: 10, artist: "Rosalía", album: "Lux" },
+                    { rank: 11, artist: "Caroline", album: "Caroline 2" },
+                    { rank: 12, artist: "Los Thuthanaka", album: "Los Thuthanaka" },
+                    { rank: 13, artist: "FKA twigs", album: "Eusexua Afterglow" },
+                    { rank: 14, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 15, artist: "YHWH Nailgun", album: "45 Pounds" },
+                    { rank: 16, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 17, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 18, artist: "Pink Pantheress", album: "Fancy That" },
+                    { rank: 19, artist: "Model/Actriz", album: "Pirouette" },
+                    { rank: 20, artist: "Samia", album: "Bloodless" },
+                    { rank: 21, artist: "Miley Cyrus", album: "Something Beautiful" },
+                    { rank: 22, artist: "Lorde", album: "Virgin" },
+                    { rank: 23, artist: "Youth Lagoon", album: "Rarely Do I Dream" },
+                    { rank: 24, artist: "Julien Baker & Torres", album: "Send a Prayer My Way" },
+                    { rank: 25, artist: "Jason Isbell", album: "Foxes in the Snow" },
+                    { rank: 26, artist: "Cleo Reed", album: "Cuntry" },
+                    { rank: 27, artist: "Erika de Casier", album: "Lifetime" },
+                    { rank: 28, artist: "The Beths", album: "Straight Line Was a Lie" },
+                    { rank: 29, artist: "Bad Bunny", album: "Debí Tirar Más Fotos" },
+                    { rank: 30, artist: "CMAT", album: "Euro-Country" },
+                    { rank: 31, artist: "Ethel Cain", album: "Willoughby Tucker, I’ll Always Love You" },
+                    { rank: 32, artist: "Kali Uchis", album: "Sincerely" },
+                    { rank: 33, artist: "Craig Finn", album: "Always Been" },
+                    { rank: 34, artist: "Dan English", album: "Sky Record" },
+                    { rank: 35, artist: "Billy Woods", album: "Golliwog" },
+                    { rank: 36, artist: "Alex G", album: "Headlights" },
+                    { rank: 37, artist: "Florry", album: "Sounds Like…" },
+                    { rank: 38, artist: "Neko Case", album: "Neon Grey Midnight Green" },
+                    { rank: 39, artist: "Perfume Genius", album: "Glory" },
+                    { rank: 40, artist: "Swans", album: "Birthing" },
+                    { rank: 41, artist: "Jade", album: "That’s Showbiz Baby!" },
+                    { rank: 42, artist: "Benefits", album: "Constant Noise" },
+                    { rank: 43, artist: "Fust", album: "Big Ugly" },
+                    { rank: 44, artist: "Deafheaven", album: "Lonely People with Power" },
+                    { rank: 45, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 46, artist: "Hayley Williams", album: "Ego Death at a Bachelorette Party" },
+                    { rank: 47, artist: "Aya", album: "Hexed!" },
+                    { rank: 48, artist: "Big Thief", album: "Double Infinity" },
+                    { rank: 49, artist: "Patterson Hood", album: "Exploding Trees & Airplane Screams" },
+                    { rank: 50, artist: "Japanese Breakfast", album: "For Melancholy Brunettes (& Sad Women)" }
+                ]
+            },
+            {
+                id: 12, source: "The Fader", country: "US", url: "https://www.thefader.com/2025/12/08/the-50-best-albums-of-2025", weight: 50,
+                data: [
+                    { rank: 1, artist: "Addison Rae", album: "Addison" },
+                    { rank: 2, artist: "Rochelle Jordan", album: "Through The Wall" },
+                    { rank: 3, artist: "Rosalía", album: "LUX" },
+                    { rank: 4, artist: "Bad Bunny", album: "DeBÍ TiRAR MáS FOToS" },
+                    { rank: 5, artist: "prettifun", album: "FunHouse Deluxe" },
+                    { rank: 6, artist: "Lily Allen", album: "West End Girl" },
+                    { rank: 7, artist: "Erika de Casier", album: "lifetime" },
+                    { rank: 8, artist: "JADE", album: "That's Showbiz, Baby!" },
+                    { rank: 9, artist: "Amaarae", album: "BLACKSTAR" },
+                    { rank: 10, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 11, artist: "Goldlink", album: "ENOCH" },
+                    { rank: 12, artist: "Netón Vega", album: "Mi Vida Mi Muerte" },
+                    { rank: 13, artist: "Dijon", album: "Baby" },
+                    { rank: 14, artist: "Smerz", album: "Big city life" },
+                    { rank: 15, artist: "Theodora", album: "MEGA BBL" },
+                    { rank: 16, artist: "OsamaSon", album: "Psykotic" },
+                    { rank: 17, artist: "Ouri", album: "Daisy Cutter" },
+                    { rank: 18, artist: "Jim Legxacy", album: "Black British Music" },
+                    { rank: 19, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 20, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 21, artist: "Feid", album: "Ferxxo Vol X: Sagrado" },
+                    { rank: 22, artist: "Justin Bieber", album: "SWAG" },
+                    { rank: 23, artist: "Safe Mind", album: "Cutting The Stone" },
+                    { rank: 24, artist: "After", album: "After EP 2" },
+                    { rank: 25, artist: "bambinodj", album: "Silent Dispatch" },
+                    { rank: 26, artist: "Cate Le Bon", album: "Michelangelo Dying" },
+                    { rank: 27, artist: "Amore", album: "Top Hits, Ballads, etc..." },
+                    { rank: 28, artist: "Earl Sweatshirt", album: "Live Laugh Love" },
+                    { rank: 29, artist: "Exo", album: "Exo" },
+                    { rank: 30, artist: "Odeal", album: "The Summer That Saved Me" },
+                    { rank: 31, artist: "Water From Your Eyes", album: "It's A Beautiful Place" },
+                    { rank: 32, artist: "MIKE", album: "Showbiz!" },
+                    { rank: 33, artist: "Vayda", album: "Get In The Car" },
+                    { rank: 34, artist: "Ruger", album: "Blownboy Ru" },
+                    { rank: 35, artist: "Sol ChYld", album: "ReBirth.Theory" },
+                    { rank: 36, artist: "Molly Santana", album: "Molly & Her Week of Wonders" },
+                    { rank: 37, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 38, artist: "Easykid", album: "I'M PART" },
+                    { rank: 39, artist: "Ela Taubert", album: "Preguntas a las 11:11" },
+                    { rank: 40, artist: "Jordan Patterson", album: "The Hermit" },
+                    { rank: 41, artist: "kwn", album: "with all due respect" },
+                    { rank: 42, artist: "Malibu", album: "Vanities" },
+                    { rank: 43, artist: "Marie Davidson", album: "City of Clowns" },
+                    { rank: 44, artist: "Edward Skeletrix", album: "Museum Music" },
+                    { rank: 45, artist: "Sudan Archives", album: "The BPM" },
+                    { rank: 46, artist: "Thirteendegrees", album: "Clique City Vol. 2" },
+                    { rank: 47, artist: "Olivia Dean", album: "The Art of Loving" },
+                    { rank: 48, artist: "YVES", album: "Soft Error: X" },
+                    { rank: 49, artist: "Bassvictim", album: "Forever" },
+                    { rank: 50, artist: "Tyler, the Creator", album: "Don't Tap The Glass" }
+                ]
+            },
+            {
+                id: 13, source: "Consequence", country: "US", url: "https://consequence.net/list/best-albums-of-2025-annual-report/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Rosalía", album: "LUX" },
+                    { rank: 2, artist: "Geese", album: "Getting Killed" },
+                    { rank: 3, artist: "Clipse", album: "Let God Sort Em Out" },
+                    { rank: 4, artist: "FKA twigs", album: "EUSEXUA" },
+                    { rank: 5, artist: "Deafheaven", album: "Lonely People with Power" },
+                    { rank: 6, artist: "Bon Iver", album: "SABLE, fABLE" },
+                    { rank: 7, artist: "Saba & No ID", album: "From the Private Collection of Saba and No ID" },
+                    { rank: 8, artist: "Viagra Boys", album: "viagr aboys" },
+                    { rank: 9, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 10, artist: "Momma", album: "Welcome to My Blue Sky" },
+                    { rank: 11, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 12, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 13, artist: "Tyler, the Creator", album: "DON'T TAP THE GLASS" },
+                    { rank: 14, artist: "Cameron Winter", album: "Heavy Metal" },
+                    { rank: 15, artist: "Perfume Genius", album: "Glory" },
+                    { rank: 16, artist: "JID", album: "God Does Like Ugly" },
+                    { rank: 17, artist: "Shallowater", album: "God's Gonna Give You a Million Dollars" },
+                    { rank: 18, artist: "Turnstile", album: "NEVER ENOUGH" },
+                    { rank: 19, artist: "Sharon Van Etten & The Attachment Theory", album: "Sharon Van Etten & The Attachment Theory" },
+                    { rank: 20, artist: "Deftones", album: "private music" },
+                    { rank: 21, artist: "Marshall Allen", album: "New Dawn" },
+                    { rank: 22, artist: "MIKE", album: "Showbiz!" },
+                    { rank: 23, artist: "PUP", album: "Who Will Look After the Dogs?" },
+                    { rank: 24, artist: "McKinley Dixon", album: "Magic, Alive!" },
+                    { rank: 25, artist: "Nourished by Time", album: "The Passionate Ones" },
+                    { rank: 26, artist: "YHWH Nailgun", album: "45 Pounds" },
+                    { rank: 27, artist: "Dijon", album: "Baby" },
+                    { rank: 28, artist: "Lady Gaga", album: "MAYHEM" },
+                    { rank: 29, artist: "Bad Bunny", album: "DeBÍ TiRAR MáS FOToS" },
+                    { rank: 30, artist: "Rochelle Jordan", album: "Through the Wall" },
+                    { rank: 31, artist: "Sabrina Carpenter", album: "Man's Best Friend" },
+                    { rank: 32, artist: "Little Simz", album: "Lotus" },
+                    { rank: 33, artist: "Hannah Cohen", album: "Earthstar Mountain" },
+                    { rank: 34, artist: "Monaleo", album: "Who Did the Body" },
+                    { rank: 35, artist: "Hotline TNT", album: "Raspberry Moon" },
+                    { rank: 36, artist: "Hayley Williams", album: "Ego Death at a Bachelorette Party" },
+                    { rank: 37, artist: "Divide and Dissolve", album: "Insatiable" },
+                    { rank: 38, artist: "Spiritbox", album: "Tsunami Sea" },
+                    { rank: 39, artist: "Rocket", album: "R Is for Rocket" },
+                    { rank: 40, artist: "KenTheMan", album: "Kinda Famous" },
+                    { rank: 41, artist: "Erika de Casier", album: "Lifetime" },
+                    { rank: 42, artist: "Samia", album: "Bloodless" },
+                    { rank: 43, artist: "Parcels", album: "LOVED" },
+                    { rank: 44, artist: "Die Spitz", album: "Something to Consume" },
+                    { rank: 45, artist: "Teethe", album: "Magic of the Sale" },
+                    { rank: 46, artist: "SPELLLING", album: "Portrait of My Heart" },
+                    { rank: 47, artist: "PinkPantheress", album: "Fancy That" },
+                    { rank: 48, artist: "Hesse Kassel", album: "La Brea" },
+                    { rank: 49, artist: "Lambrini Girls", album: "Who Let the Dogs Out" },
+                    { rank: 50, artist: "Florence + the Machine", album: "Everybody Scream" }
+                ]
+            },
+            {
+                id: 14, source: "Stereogum", country: "US", url: "https://stereogum.com/2480469/the-50-best-albums-of-2025/lists/year-in-review/2025-in-review", weight: 50,
+                data: [
+                    { rank: 1, artist: "Geese", album: "Getting Killed" },
+                    { rank: 2, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 3, artist: "Oklou", album: "choke enough" },
+                    { rank: 4, artist: "Rosalía", album: "LUX" },
+                    { rank: 5, artist: "Friendship", album: "Caveman Wakes Up" },
+                    { rank: 6, artist: "Smerz", album: "Big city life" },
+                    { rank: 7, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 8, artist: "They Are Gutting A Body Of Water", album: "LOTTO" },
+                    { rank: 9, artist: "Dijon", album: "Baby" },
+                    { rank: 10, artist: "Greg Freeman", album: "Burnover" },
+                    { rank: 11, artist: "james K", album: "Friend" },
+                    { rank: 12, artist: "PinkPantheress", album: "Fancy That" },
+                    { rank: 13, artist: "caroline", album: "caroline 2" },
+                    { rank: 14, artist: "Los Thuthanaka", album: "Los Thuthanaka" },
+                    { rank: 15, artist: "Jane Remover", album: "Revengeseekerz" },
+                    { rank: 16, artist: "Ninajirachi", album: "I Love My Computer" },
+                    { rank: 17, artist: "Addison Rae", album: "Addison" },
+                    { rank: 18, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 19, artist: "Water From Your Eyes", album: "It's A Beautiful Place" },
+                    { rank: 20, artist: "Agriculture", album: "The Spiritual Sound" },
+                    { rank: 21, artist: "JADE", album: "THAT'S SHOWBIZ BABY!" },
+                    { rank: 22, artist: "Nourished By Time", album: "The Passionate Ones" },
+                    { rank: 23, artist: "Lorde", album: "Virgin" },
+                    { rank: 24, artist: "Momma", album: "Welcome To My Blue Sky" },
+                    { rank: 25, artist: "aya", album: "Hexed!" },
+                    { rank: 26, artist: "Deafheaven", album: "Lonely People With Power" },
+                    { rank: 27, artist: "2hollis", album: "star" },
+                    { rank: 28, artist: "Militarie Gun", album: "God Save The Gun" },
+                    { rank: 29, artist: "Purelink", album: "Faith" },
+                    { rank: 30, artist: "Sudan Archives", album: "The BPM" },
+                    { rank: 31, artist: "Deftones", album: "private music" },
+                    { rank: 32, artist: "Hayley Williams", album: "Ego Death At A Bachelorette Party" },
+                    { rank: 33, artist: "Scarab", album: "Burn After Listening" },
+                    { rank: 34, artist: "Chat Pile & Hayden Pedigo", album: "In The Earth Again" },
+                    { rank: 35, artist: "Bad Bunny", album: "DeBÍ TiRAR MáS FOToS" },
+                    { rank: 36, artist: "Snocaps", album: "Snocaps" },
+                    { rank: 37, artist: "Joanne Robertson", album: "Blurrr" },
+                    { rank: 38, artist: "DjRUM", album: "Under Tangled Silence" },
+                    { rank: 39, artist: "Tyler, The Creator", album: "Don't Tap The Glass" },
+                    { rank: 40, artist: "Total Wife", album: "come back down" },
+                    { rank: 41, artist: "Che", album: "Rest In Bass" },
+                    { rank: 42, artist: "Hotline TNT", album: "Raspberry Moon" },
+                    { rank: 43, artist: "Nick León", album: "A Tropical Entropy" },
+                    { rank: 44, artist: "FKA twigs", album: "EUSEXUA" },
+                    { rank: 45, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 46, artist: "Ryan Davis & The Roadhouse Band", album: "New Threats From The Soul" },
+                    { rank: 47, artist: "Sorry", album: "Cosplay" },
+                    { rank: 48, artist: "Cleo Reed", album: "Cuntry" },
+                    { rank: 49, artist: "Messa", album: "The Spin" },
+                    { rank: 50, artist: "Shallowater", album: "God's Gonna Give You A Million Dollars" }
+                ]
+            },
+            {
+                id: 15, source: "The Quietus", country: "UK", url: "https://thequietus.com/tq-charts/albums-of-the-year/best-albums-of-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "aya", album: "Hexed!" },
+                    { rank: 2, artist: "EarthBall", album: "Outside Over There" },
+                    { rank: 3, artist: "Richard Dawson", album: "End Of The Middle" },
+                    { rank: 4, artist: "These New Puritans", album: "Crooked Wing" },
+                    { rank: 5, artist: "Blawan", album: "SickElixir" },
+                    { rank: 6, artist: "Decius", album: "Vol. II (Splendour & Obedience)" },
+                    { rank: 7, artist: "Agriculture", album: "The Spiritual Sound" },
+                    { rank: 8, artist: "John Glacier", album: "Like A Ribbon" },
+                    { rank: 9, artist: "France", album: "Destino Scifosi" },
+                    { rank: 10, artist: "Jerskin Fendrix", album: "Once Upon A Time… In Shropshire" },
+                    { rank: 11, artist: "elijah jamal asani", album: ",,, as long as i long to memorise your sky ,,," },
+                    { rank: 12, artist: "caroline", album: "caroline 2" },
+                    { rank: 13, artist: "Heinali & Andriana-Yaroslava Saienko", album: "Гільдеґарда (Hildegard)" },
+                    { rank: 14, artist: "Dale Cornish", album: "Altruism" },
+                    { rank: 15, artist: "Horse Lords & Arnold Dreyblatt", album: "FRKWYS Vol. 18: Extended Field" },
+                    { rank: 16, artist: "Milkweed", album: "Remscéla" },
+                    { rank: 17, artist: "Läuten Der Seele", album: "Unterhaltungen mit Larven und Überresten" },
+                    { rank: 18, artist: "Nourished By Time", album: "The Passionate Ones" },
+                    { rank: 19, artist: "Nadeem Din-Gabisi", album: "Offshore" },
+                    { rank: 20, artist: "Matmos", album: "Metallic Life" },
+                    { rank: 21, artist: "Suede", album: "Antidepressants" },
+                    { rank: 22, artist: "OsamaSon", album: "Jump Out" },
+                    { rank: 23, artist: "Eiko Ishibashi", album: "Antigone" },
+                    { rank: 24, artist: "Leo Chadburn", album: "Sleep In The Shadow Of The Alternator" },
+                    { rank: 25, artist: "Širom", album: "In The Wind Of Night, Hard-Fallen Incantations Whisper" },
+                    { rank: 26, artist: "DJ K", album: "Radio Libertadora !" },
+                    { rank: 27, artist: "Los Pirañas", album: "Una Oportunidad Más de Triunfar en la Vida" },
+                    { rank: 28, artist: "Jim Ghedi", album: "Wasteland" },
+                    { rank: 29, artist: "Microcorps", album: "CLEAR VORTEX CHAMBER" },
+                    { rank: 30, artist: "Stereolab", album: "Instant Holograms On Metal Film" },
+                    { rank: 31, artist: "Danny Brown", album: "Stardust" },
+                    { rank: 32, artist: "Patrick Wolf", album: "Crying The Neck" },
+                    { rank: 33, artist: "Rosalía", album: "LUX" },
+                    { rank: 34, artist: "billy woods", album: "Golliwog" },
+                    { rank: 35, artist: "The Worm", album: "Pantilde" },
+                    { rank: 36, artist: "Marie Davidson", album: "City Of Clowns" },
+                    { rank: 37, artist: "Rainy Miller", album: "Joseph, What Have You Done?" },
+                    { rank: 38, artist: "Jules Reidy", album: "Ghost/Spirit" },
+                    { rank: 39, artist: "Lost Crowns", album: "The Heart Is In The Body" },
+                    { rank: 40, artist: "Cosey Fanni Tutti", album: "2t2" },
+                    { rank: 41, artist: "Jim Legxacy", album: "Black British Music (2025)" },
+                    { rank: 42, artist: "Chicago Underground Duo", album: "Hyperglyph" },
+                    { rank: 43, artist: "Bb trickz", album: "80’z" },
+                    { rank: 44, artist: "Osmium", album: "Osmium" },
+                    { rank: 45, artist: "Haress", album: "Skylarks" },
+                    { rank: 46, artist: "Kasai", album: "〽" },
+                    { rank: 47, artist: "Anton Anishchanka", album: "Krope" },
+                    { rank: 48, artist: "Joy Moughanni", album: "A Separation From Habit" },
+                    { rank: 49, artist: "Mary Halvorson", album: "About Ghosts" },
+                    { rank: 50, artist: "Ethel Cain", album: "Perverts" }
+                ]
+            },
+            {
+                id: 16, source: "Crack", country: "UK", url: "https://crackmagazine.net/article/list-article/best-albums-of-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 2, artist: "EsDeeKid", album: "Rebel" },
+                    { rank: 3, artist: "Ethel Cain", album: "Perverts" },
+                    { rank: 4, artist: "Jim Legxacy", album: "Black British Music" },
+                    { rank: 5, artist: "Rosalía", album: "Lux" },
+                    { rank: 6, artist: "Cosey Fanni Tutti", album: "2t2" },
+                    { rank: 7, artist: "Paul St Hilaire", album: "w/ The Producers" },
+                    { rank: 8, artist: "Geese", album: "Getting Killed" },
+                    { rank: 9, artist: "Los Thuthanaka", album: "Los Thuthanaka" },
+                    { rank: 10, artist: "Brìghde Chaimbeul", album: "Sunwise" },
+                    { rank: 11, artist: "james K", album: "Friend" },
+                    { rank: 12, artist: "Dijon", album: "Baby" },
+                    { rank: 13, artist: "Saya Gray", album: "Saya" },
+                    { rank: 14, artist: "Purelink", album: "Faith" },
+                    { rank: 15, artist: "Annahstasia", album: "Tether" },
+                    { rank: 16, artist: "Heinali & Andriana-Yaroslava Saienko", album: "Гільдеґарда (Hildegard)" },
+                    { rank: 17, artist: "YHWH Nailgun", album: "45 Pounds" },
+                    { rank: 18, artist: "aya", album: "hexed!" },
+                    { rank: 19, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 20, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 21, artist: "Time Cow", album: "Scaring 1100 Chickens to Death" },
+                    { rank: 22, artist: "Joanne Robertson", album: "Blurrr" },
+                    { rank: 23, artist: "Tyler, the Creator", album: "Don’t Tap the Glass" },
+                    { rank: 24, artist: "Yeat", album: "Dangerous Summer" },
+                    { rank: 25, artist: "Nick León", album: "A Tropical Entropy" },
+                    { rank: 26, artist: "Titanic", album: "HAGEN" },
+                    { rank: 27, artist: "Caroline", album: "Caroline 2" },
+                    { rank: 28, artist: "Rainy Miller", album: "Joseph, What Have You Done?" },
+                    { rank: 29, artist: "Horsegirl", album: "Phonetics On and On" },
+                    { rank: 30, artist: "Milkweed", album: "Remscéla" },
+                    { rank: 31, artist: "Men I Trust", album: "Equus Asinus" },
+                    { rank: 32, artist: "Mark Ernestus’ Ndagga Rhythm Force", album: "Khadim" },
+                    { rank: 33, artist: "Blawan", album: "SickElixir" },
+                    { rank: 34, artist: "FKA twigs", album: "Eusexua" },
+                    { rank: 35, artist: "Ganavya", album: "Nilam" },
+                    { rank: 36, artist: "Lucrecia Dalt", album: "A Danger to Ourselves" },
+                    { rank: 37, artist: "DJ K", album: "Rádio Libertadora" },
+                    { rank: 38, artist: "France", album: "Destino Scifosi" },
+                    { rank: 39, artist: "Carrier", album: "Rhythm Immortal" },
+                    { rank: 40, artist: "DJ Haram", album: "Beside Myself" },
+                    { rank: 41, artist: "Smerz", album: "Big City Life" },
+                    { rank: 42, artist: "Mark William Lewis", album: "Mark William Lewis" },
+                    { rank: 43, artist: "coatshek", album: "Sound Bath" },
+                    { rank: 44, artist: "Maria Somerville", album: "Luster" },
+                    { rank: 45, artist: "Quinie", album: "Forefowk, Mind Me" },
+                    { rank: 46, artist: "Maxo", album: "Mars Is Electric" },
+                    { rank: 47, artist: "John Glacier", album: "Like a Ribbon" },
+                    { rank: 48, artist: "Water from Your Eyes", album: "It’s a Beautiful Place" },
+                    { rank: 49, artist: "Masma Dream World", album: "Please Come to Me" },
+                    { rank: 50, artist: "Pink Siifu", album: "Black’!Antique" }
+                ]
+            },
+            {
+                id: 17, source: "Exitmusik", country: "FR", url: "https://exitmusik.fr/top-albums-et-playlist-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Ventura", album: "Superheld" },
+                    { rank: 2, artist: "Pamplemousse", album: "Porcelain" },
+                    { rank: 3, artist: "Shannon Wright", album: "Reservoir of Love" },
+                    { rank: 4, artist: "Jessica93", album: "666 tours de périph’" },
+                    { rank: 5, artist: "Throwing Muses", album: "Moonlight Concessions" },
+                    { rank: 6, artist: "Castle Rat", album: "The Bestiary" },
+                    { rank: 7, artist: "Mogwai", album: "The Bad Fire" },
+                    { rank: 8, artist: "Deftones", album: "private music" },
+                    { rank: 9, artist: "Maruja", album: "Pain to Power" },
+                    { rank: 10, artist: "The Tubs", album: "Cotton Crown" },
+                    { rank: 11, artist: "Saya Gray", album: "SAYA" },
+                    { rank: 12, artist: "The Young Gods", album: "Appear Disappear" },
+                    { rank: 13, artist: "Chat Pile & Hayden Pedigo", album: "In the Earth Again" },
+                    { rank: 14, artist: "Chris Brokaw", album: "Ghost Ship" },
+                    { rank: 15, artist: "Dax Riggs", album: "7 Songs for Spiders" },
+                    { rank: 16, artist: "Chris Eckman", album: "The Land We Knew the Best" },
+                    { rank: 17, artist: "Michel Cloup", album: "Catharsis en pièces détachées" },
+                    { rank: 18, artist: "Thalia Zedek Band", album: "The Boat Outside Your Window" },
+                    { rank: 19, artist: "Stereolab", album: "Instant Holograms on Metal Film" },
+                    { rank: 20, artist: "Geese", album: "Getting Killed" },
+                    { rank: 21, artist: "Messa", album: "The Spin" },
+                    { rank: 22, artist: "Today Is The Day", album: "Never Give In" },
+                    { rank: 23, artist: "Fuzzy Lights", album: "Fen Creatures" },
+                    { rank: 24, artist: "Big Thief", album: "Double Infinity" },
+                    { rank: 25, artist: "Zëro", album: "Never Ending Rodeo" },
+                    { rank: 26, artist: "Melvins", album: "Thunderball" },
+                    { rank: 27, artist: "Bob Mould", album: "Here We Go Crazy" },
+                    { rank: 28, artist: "Jim White", album: "Inner Day" },
+                    { rank: 29, artist: "Pain Magazine", album: "Violent God" },
+                    { rank: 30, artist: "Marissa Nadler", album: "New Radiations" },
+                    { rank: 31, artist: "À terre", album: "Embrasser la nuit" },
+                    { rank: 32, artist: "Bruit ≤", album: "The Age of Ephemerality" },
+                    { rank: 33, artist: "Dead Pioneers", album: "Po$t American" },
+                    { rank: 34, artist: "Jeff Tweedy", album: "Twilight Override" },
+                    { rank: 35, artist: "Richard Dawson", album: "End of the Middle" },
+                    { rank: 36, artist: "Antinoë", album: "The Fold" },
+                    { rank: 37, artist: "Modern Nature", album: "The Heat Warps" },
+                    { rank: 38, artist: "Intercourse", album: "How I Fell In Love With the Void" },
+                    { rank: 39, artist: "The Austerity Program", album: "Bible Songs 2" },
+                    { rank: 40, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 41, artist: "Halfmass", album: "Ten-Gallon Heart" },
+                    { rank: 42, artist: "Earth Ball", album: "Outside Over There" },
+                    { rank: 43, artist: "Arthur Satàn", album: "A Journey That Never Was" },
+                    { rank: 44, artist: "Coroner", album: "Dissonance Theory" },
+                    { rank: 45, artist: "Alice Cooper", album: "The Revenge of Alice Cooper" },
+                    { rank: 46, artist: "Colter Wall", album: "Memories and Empties" },
+                    { rank: 47, artist: "Insecure Men", album: "A Man For All Seasons" },
+                    { rank: 48, artist: "Point Mort", album: "Le point de non-retour" },
+                    { rank: 49, artist: "Horsegirl", album: "Phonetics On and On" },
+                    { rank: 50, artist: "Deadguy", album: "Near-Death Travel Services" }
+                ]
+            },
+            {
+                id: 18, source: "Section-26", country: "FR", url: "https://section-26.fr/le-classement-de-la-redaction-2025/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Sharp Pins", album: "Balloon, Balloon, Balloon" },
+                    { rank: 2, artist: "Blood Orange", album: "Essex Honey" },
+                    { rank: 3, artist: "Horsegirl", album: "Phonetics On and On" },
+                    { rank: 4, artist: "Joanne Robertson", album: "Blurrr" },
+                    { rank: 5, artist: "Andrea Laszlo De Simone", album: "Una Lunghissima Ombra" },
+                    { rank: 6, artist: "Pulp", album: "More" },
+                    { rank: 7, artist: "Jemima", album: "Even The Dog Knows" },
+                    { rank: 8, artist: "Ellah A Thaun", album: "The Seminal Record Of Ellah A Thaun" },
+                    { rank: 9, artist: "The Apartments", album: "That’s What The Music is For" },
+                    { rank: 10, artist: "Jeff Tweedy", album: "Twilight Override" },
+                    { rank: 11, artist: "The New Eves", album: "The New Eve Is Rising" },
+                    { rank: 12, artist: "Water From Your Eyes", album: "It’s a Beautiful Place" },
+                    { rank: 13, artist: "Geese", album: "Getting Killed" },
+                    { rank: 14, artist: "Lael Neale", album: "Altogether Stranger" },
+                    { rank: 15, artist: "Steve Gunn", album: "Music For Writers" },
+                    { rank: 16, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 17, artist: "Charlotte Leclerc", album: "Moiré" },
+                    { rank: 18, artist: "Marius Atherton", album: "Music For A While" },
+                    { rank: 19, artist: "Paris Banlieue", album: "Dans Les Lieux" },
+                    { rank: 20, artist: "The Tubs", album: "Cotton Crown" },
+                    { rank: 21, artist: "Caroline", album: "Caroline 2" },
+                    { rank: 22, artist: "Richard Dawson", album: "End Of The Middle" },
+                    { rank: 23, artist: "Stereolab", album: "Instant Holograms on Metal Film" },
+                    { rank: 24, artist: "Benefits", album: "Constant Noise" },
+                    { rank: 25, artist: "Bernard Rocks", album: "Vol 1 Out The Window & Vol 2" },
+                    { rank: 26, artist: "Dean Blunt & Elias Ronnenfelt", album: "lucre" },
+                    { rank: 27, artist: "Saint Etienne", album: "International" },
+                    { rank: 28, artist: "Joy Crookes", album: "Juniper" },
+                    { rank: 29, artist: "Ethel Cain", album: "Perverts" },
+                    { rank: 30, artist: "Steve Gunn", album: "Daylight Daylight" },
+                    { rank: 31, artist: "Gelli Haha", album: "Switcheroo" },
+                    { rank: 32, artist: "Bar Italia", album: "Some Like It Hot" },
+                    { rank: 33, artist: "They Are Gutting a Body of Water", album: "Lotto" },
+                    { rank: 34, artist: "Rosalia", album: "Lux" },
+                    { rank: 35, artist: "Giorgio Poi", album: "Schegge" },
+                    { rank: 36, artist: "Lola Young", album: "I’m Only F**king Myself" },
+                    { rank: 37, artist: "Bertrand Belin", album: "Watt" },
+                    { rank: 38, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 39, artist: "White Magic For Lovers", album: "The Book Of Lies" },
+                    { rank: 40, artist: "Alex G", album: "Headlights" },
+                    { rank: 41, artist: "Sharp Pins", album: "Radio DDR" },
+                    { rank: 42, artist: "Black Country, New Road", album: "Forever Howlong" },
+                    { rank: 43, artist: "Brannten Schnüre", album: "Landschaft Aus Tränen" },
+                    { rank: 44, artist: "Destroyer", album: "Dan’s Boogie" },
+                    { rank: 45, artist: "Elg et la Chimie", album: "Immense Eboulis Rouge" },
+                    { rank: 46, artist: "Girls Rituals", album: "I’m It!" },
+                    { rank: 47, artist: "Hand Habits", album: "Blue Reminder" },
+                    { rank: 48, artist: "Léonie Pernet", album: "Poèmes Pulvérisés" },
+                    { rank: 49, artist: "Natalie Bergman", album: "My Home Is Not In This World" },
+                    { rank: 50, artist: "Pan Amsterdam", album: "Confines" }
+                ]
+            },
+            {
+                id: 19, source: "Le Canal Auditif", country: "CAN", url: "https://lecanalauditif.ca/chroniques/top-2025-albums-annee/", weight: 50,
+                data: [
+                    { rank: 1, artist: "Population II", album: "Maintenant jamais" },
+                    { rank: 2, artist: "Lou-Adriane Cassidy", album: "Journal d’un loup-garou" },
+                    { rank: 3, artist: "Antoine Corriveau", album: "Oiseau de nuit" },
+                    { rank: 4, artist: "Deftones", album: "private music" },
+                    { rank: 5, artist: "Clipse", album: "Let God Sort ‘Em Out" },
+                    { rank: 6, artist: "Lou-Adriane Cassidy", album: "Triste animal" },
+                    { rank: 7, artist: "Geese", album: "Getting Killed" },
+                    { rank: 8, artist: "Rosalía", album: "LUX" },
+                    { rank: 9, artist: "FKA Twigs", album: "EUSEXUA" },
+                    { rank: 10, artist: "Ariane Roy", album: "Dogue" },
+                    { rank: 11, artist: "Pile", album: "Sunshine and Balance Beams" },
+                    { rank: 12, artist: "Bolduc Tout Croche", album: "Fracture" },
+                    { rank: 13, artist: "Ambre Ciel", album: "still, there is the sea" },
+                    { rank: 14, artist: "Model/Actriz", album: "Pirouette" },
+                    { rank: 15, artist: "Lambrini Girls", album: "Who Let the Dogs Out" },
+                    { rank: 16, artist: "Chat Pile & Hayden Pedigo", album: "In the Earth Again" },
+                    { rank: 17, artist: "Swans", album: "Birthing" },
+                    { rank: 18, artist: "Patrick Watson", album: "Uh Oh" },
+                    { rank: 19, artist: "Tom Chicoine", album: "Divertir" },
+                    { rank: 20, artist: "Viagra Boys", album: "Viagr Aboys" },
+                    { rank: 21, artist: "Enfants Sauvages", album: "Avant la mort" },
+                    { rank: 22, artist: "Les Vulgaires Machins", album: "Contempler l’abîme" },
+                    { rank: 23, artist: "Billy Woods", album: "Golliwog" },
+                    { rank: 24, artist: "Catherine Leduc", album: "Les jours où il neige à tous les postes" },
+                    { rank: 25, artist: "Wet Leg", album: "Moisturizer" },
+                    { rank: 26, artist: "Lily Allen", album: "West End Girl" },
+                    { rank: 27, artist: "Marie Davidson", album: "City of Clowns" },
+                    { rank: 28, artist: "YHWH Nailgun", album: "45 Pounds" },
+                    { rank: 29, artist: "Crabe", album: "Expression radicale" },
+                    { rank: 30, artist: "Tropical Fuck Storm", album: "Fairyland Codex" },
+                    { rank: 31, artist: "Mclusky", album: "The World Is Still Here and So Are We" },
+                    { rank: 32, artist: "Vanille", album: "Un chant d’amour" },
+                    { rank: 33, artist: "Oneohtrix Point Never", album: "Tranquilizer" },
+                    { rank: 34, artist: "Ptite Sœur & FEMTOGO", album: "PRETTY DOLLCORPSE" },
+                    { rank: 35, artist: "Oklou", album: "Choke Enough" },
+                    { rank: 36, artist: "Agriculture", album: "The Spiritual Sound" },
+                    { rank: 37, artist: "Earl Sweatshirt", album: "Live Laugh Love" },
+                    { rank: 38, artist: "Wednesday", album: "Bleeds" },
+                    { rank: 39, artist: "Richard Dawson", album: "End of the Middle" },
+                    { rank: 40, artist: "DjRUM", album: "Under Tangled Silence" },
+                    { rank: 41, artist: "Activity", album: "A Thousand Years in Another Way" },
+                    { rank: 42, artist: "The Barr Brothers", album: "Let it Hiss" },
+                    { rank: 43, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 44, artist: "Tyler the Creator", album: "Don’t Tap the Glass" },
+                    { rank: 45, artist: "Lorde", album: "Virgin" },
+                    { rank: 46, artist: "Destroyer", album: "Dan’s Boogie" },
+                    { rank: 47, artist: "Ribbon Skirt", album: "Bite Down" },
+                    { rank: 48, artist: "pas de signal", album: "13h07" },
+                    { rank: 49, artist: "Théodora", album: "MEGA BBL" },
+                    { rank: 50, artist: "Perséide", album: "Passages secrets" }
+                ]
+            }
+        ];
+
+        // --- ALGORITHME D'AGRÉGATION ---
+        // (Déplacé à l'intérieur du composant pour respecter les règles de React)
+
+        function MetaRankingApp() {
+            const [lists, setLists] = useState(INITIAL_LISTS);
+            const [lang, setLang] = useState('fr'); // 'fr' | 'en'
+            const [currentPage, setCurrentPage] = useState(1);
+            const itemsPerPage = 20;
+
+            const t = TRANSLATIONS[lang];
+            
+            const deleteList = (id) => {
+                setLists(lists.filter(l => l.id !== id));
+            };
+
+            const resetLists = () => {
+                setLists(INITIAL_LISTS);
+            };
+
+            const toggleLang = () => {
+                setLang(prev => prev === 'fr' ? 'en' : 'fr');
+            };
+
+            // --- RE-CALCUL SUR LA BASE DES LISTES ACTIVES (Filtrées) ---
+            const activeData = useMemo(() => {
+                const albumMap = new Map();
+
+                lists.forEach(list => {
+                    const maxPoints = list.weight + 1; 
+                    
+                    list.data.forEach(entry => {
+                        const normalize = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '');
+                        const key = `${normalize(entry.artist)}-${normalize(entry.album)}`;
+                        
+                        if (!albumMap.has(key)) {
+                            albumMap.set(key, {
+                                artist: entry.artist,
+                                album: entry.album,
+                                totalScore: 0,
+                                mentions: [],
+                                highestRank: 999
+                            });
+                        }
+                        
+                        const record = albumMap.get(key);
+                        const score = Math.max(1, maxPoints - entry.rank);
+                        
+                        record.totalScore += score;
+                        record.highestRank = Math.min(record.highestRank, entry.rank);
+                        record.mentions.push({
+                            source: list.source,
+                            country: list.country,
+                            sourceUrl: list.url,
+                            rank: entry.rank,
+                            scoreContrib: score
+                        });
+                    });
+                });
+
+                return Array.from(albumMap.values())
+                    .sort((a, b) => {
+                        if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+                        if (a.highestRank !== b.highestRank) return a.highestRank - b.highestRank;
+                        return b.mentions.length - a.mentions.length;
+                    })
+                    .map((item, index) => ({ ...item, rank: index + 1 }));
+            }, [lists]);
+
+
+            // --- PAGINATION ---
+            const totalPages = Math.ceil(activeData.length / itemsPerPage);
+            const paginatedData = activeData.slice(
+                (currentPage - 1) * itemsPerPage,
+                currentPage * itemsPerPage
+            );
+
+            return (
+                <div className="min-h-screen bg-white text-zinc-900 font-sans selection:bg-black selection:text-white">
+                <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-12">
+                    
+                    {/* HEADER MODERNE & ÉPURÉ */}
+                    <header className="flex flex-col gap-8">
+                    <div className="flex justify-between items-start">
+                        <div className="space-y-2">
+                        <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9]">
+                            {t.title}
+                        </h1>
+                        <p className="text-xl md:text-2xl font-light text-zinc-500 tracking-tight">
+                            {t.subtitle}
+                        </p>
+                        </div>
+                        
+                        <button 
+                        onClick={toggleLang}
+                        className="flex items-center gap-2 px-4 py-2 border border-zinc-200 rounded-full text-sm font-bold hover:bg-black hover:text-white transition-all duration-300"
+                        >
+                        <Globe className="w-4 h-4" />
+                        {lang === 'fr' ? 'EN' : 'FR'}
+                        </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-8 pt-8 border-t border-zinc-100">
+                        {/* Méthodologie Section */}
+                        <div className="bg-indigo-50 p-6 rounded-lg border border-indigo-100 space-y-4">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-indigo-400">{t.method_title}</h2>
+                        <div className="text-sm md:text-base leading-relaxed text-zinc-700 space-y-4">
+                            <p>{t.method_text(INITIAL_LISTS.length)}</p>
+                        </div>
+                        </div>
+
+                        {/* Sources Section */}
+                        <div className="bg-zinc-100 p-6 rounded-lg border border-zinc-200 space-y-4">
+                        <div className="flex justify-between items-baseline">
+                            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400">{t.sources_title}</h2>
+                            {lists.length < INITIAL_LISTS.length && (
+                            <button onClick={resetLists} className="text-[10px] uppercase font-bold text-black border-b border-black hover:opacity-50 transition-opacity">
+                                {t.reset_btn}
+                            </button>
+                            )}
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {lists.map(list => (
+                            <div key={list.id} className="group relative inline-flex items-center">
+                                <a 
+                                href={list.url} 
+                                target="_blank" 
+                                rel="noreferrer"
+                                className="px-3 py-1.5 bg-white border border-zinc-200 text-xs font-bold uppercase tracking-wide hover:bg-black hover:text-white hover:border-black transition-all cursor-pointer"
+                                >
+                                {list.source} <span className="opacity-50 ml-1 font-normal">{FLAGS[list.country]}</span>
+                                </a>
+                                <button 
+                                onClick={() => deleteList(list.id)}
+                                className="absolute -top-2 -right-2 bg-red-500 text-white w-4 h-4 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-[10px]"
+                                title={t.remove_source}
+                                >
+                                ×
+                                </button>
+                            </div>
+                            ))}
+                        </div>
+                        </div>
+                    </div>
+                    </header>
+
+                    {/* CONTENU PRINCIPAL - LISTE */}
+                    <main className="space-y-4">
+                    
+                    {/* Entêtes de colonnes (Desktop) */}
+                    <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-3 bg-black text-white rounded-t-lg text-xs font-bold uppercase tracking-widest">
+                        <div className="col-span-1 text-center">{t.rank_col}</div>
+                        <div className="col-span-6">{t.album_col}</div>
+                        <div className="col-span-2 text-center">{t.score_col}</div>
+                        <div className="col-span-3 text-right">{t.details_col}</div>
+                    </div>
+
+                    <div className="space-y-2">
+                        {paginatedData.map((item) => (
+                        <RowItem key={item.rank} item={item} t={t} />
+                        ))}
+                    </div>
+
+                    {paginatedData.length === 0 && (
+                        <div className="py-20 text-center text-zinc-400 font-light">{t.no_data}</div>
+                    )}
+
+                    {/* Pagination */}
+                    {totalPages > 1 && (
+                        <div className="pt-12 flex justify-center items-center gap-4">
+                        <button 
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                            className="p-3 border border-zinc-200 rounded-full hover:bg-black hover:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-current transition-all"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <span className="font-mono text-sm font-bold">
+                            {t.page} {currentPage} <span className="text-zinc-400">{t.of} {totalPages}</span>
+                        </span>
+                        <button 
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                            className="p-3 border border-zinc-200 rounded-full hover:bg-black hover:text-white disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-current transition-all"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                        </div>
+                    )}
+                    </main>
+
+                    <footer className="border-t border-zinc-100 pt-12 text-center">
+                    <p className="text-xs text-zinc-400 font-mono">
+                        {t.footer}
+                    </p>
+                    </footer>
+                </div>
+                </div>
+            );
+        }
+
+        // Composant Ligne (Redesign)
+        function RowItem({ item, t }) {
+            const [isOpen, setIsOpen] = useState(false);
+
+            return (
+                <div className="group">
+                <div 
+                    onClick={() => setIsOpen(!isOpen)} 
+                    className={`grid grid-cols-12 gap-4 p-4 items-center cursor-pointer transition-all duration-300 border-b border-zinc-100 hover:bg-zinc-50 ${isOpen ? 'bg-zinc-50 border-zinc-200' : ''}`}
+                >
+                    {/* Rang */}
+                    <div className="col-span-2 md:col-span-1 flex justify-center">
+                    <div className={`w-10 h-10 flex items-center justify-center rounded-full font-black text-lg ${
+                        item.rank <= 3 ? 'bg-black text-white' : 'bg-zinc-200 text-zinc-600'
+                    }`}>
+                        {item.rank}
+                    </div>
+                    </div>
+                    
+                    {/* Info */}
+                    <div className="col-span-8 md:col-span-6 flex flex-col justify-center">
+                    <span className="text-xl md:text-2xl font-bold tracking-tight leading-tight group-hover:text-indigo-600 transition-colors">
+                        {item.album}
+                    </span>
+                    <span className="text-sm font-medium text-zinc-500 uppercase tracking-wide">
+                        {item.artist}
+                    </span>
+                    </div>
+                    
+                    {/* Score */}
+                    <div className="col-span-2 md:col-span-2 hidden md:flex flex-col items-center justify-center">
+                    <span className="font-black text-2xl">{item.totalScore}</span>
+                    <span className="text-[10px] uppercase font-bold text-zinc-400">{t.score_label}</span>
+                    </div>
+                    
+                    {/* Toggle */}
+                    <div className="col-span-2 md:col-span-3 flex justify-end items-center">
+                    <div className={`w-8 h-8 flex items-center justify-center rounded-full border border-zinc-200 transition-transform duration-300 ${isOpen ? 'rotate-180 bg-white' : ''}`}>
+                        <ChevronDown className="w-4 h-4 text-zinc-600" />
+                    </div>
+                    </div>
+                </div>
+
+                {/* Détails (Accordéon) */}
+                <div className={`grid transition-all duration-500 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                    <div className="p-6 md:pl-28 bg-zinc-50/50 border-x border-b border-zinc-100 mb-4">
+                        <div className="flex items-center gap-2 mb-4">
+                        <Star className="w-4 h-4 text-black fill-current" />
+                        <h4 className="text-xs font-bold uppercase tracking-widest">{t.mentions_label} ({item.mentions.length})</h4>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {item.mentions.map((m, idx) => (
+                            <a 
+                            key={idx} 
+                            href={m.sourceUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex justify-between items-center p-3 bg-white border border-zinc-100 hover:border-black transition-colors group/card"
+                            >
+                            <div className="flex flex-col">
+                                <span className="text-xs font-bold uppercase tracking-wide group-hover/card:underline decoration-1 underline-offset-2">
+                                {m.source} {FLAGS[m.country]}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <span className="text-sm font-mono font-black">#{m.rank}</span>
+                                <span className="text-[10px] font-bold bg-zinc-100 px-1.5 py-0.5 rounded text-zinc-500">+{m.scoreContrib} pts</span>
+                            </div>
+                            </a>
+                        ))}
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<MetaRankingApp />);
+    </script>
+</body>
+</html>

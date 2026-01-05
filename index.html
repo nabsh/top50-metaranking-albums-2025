@@ -139,7 +139,7 @@
         // --- TRADUCTIONS ---
         const TRANSLATIONS = {
             fr: {
-                title: "Top 50 Albums 2025",
+                title: "Top 50 des meilleurs albums 2025",
                 subtitle: "Ranking par agrégation de top-50",
                 method_title: "Méthodologie & Démarche",
                 method_text: (count) => (
@@ -167,7 +167,8 @@
                 share_btn: "Partager",
                 share_modal_title: "Partager ce classement",
                 share_copied: "Lien copié !",
-                share_copy: "Copier le lien"
+                share_copy: "Copier le lien",
+                listen_label: "Écouter sur"
             },
             en: {
                 title: "Best Albums of 2025",
@@ -198,7 +199,8 @@
                 share_btn: "Share",
                 share_modal_title: "Share this ranking",
                 share_copied: "Link copied!",
-                share_copy: "Copy Link"
+                share_copy: "Copy Link",
+                listen_label: "Listen on"
             }
         };
 
@@ -354,7 +356,7 @@
                     { rank: 35, artist: "Haim", album: "I Quit" },
                     { rank: 36, artist: "Folk Bitch Trio", album: "Now Would Be a Good Time" },
                     { rank: 37, artist: "Rochelle Jordan", album: "Through the Wall" },
-                    { rank: 38, artist: "Tyler, the Creator", album: "Don’t Tap The Glass" },
+                    { rank: 38, artist: "Tyler, the Creator", album: "Don’t Tap the Glass" },
                     { rank: 39, artist: "Maruja", album: "Pain to Power" },
                     { rank: 40, artist: "Vlure", album: "Escalate" },
                     { rank: 41, artist: "Knucks", album: "A Fine African Man" },
@@ -1559,6 +1561,20 @@
         function RowItem({ item, t }) {
             const [isOpen, setIsOpen] = useState(false);
 
+            // Générateur de liens de recherche
+            const getSearchLinks = (artist, album) => {
+                const query = encodeURIComponent(`${artist} ${album}`);
+                return [
+                    { name: 'Spotify', url: `https://open.spotify.com/search/${query}`, color: 'hover:bg-[#1DB954] hover:border-[#1DB954] hover:text-white' },
+                    { name: 'Deezer', url: `https://www.deezer.com/search/${query}`, color: 'hover:bg-[#A238FF] hover:border-[#A238FF] hover:text-white' },
+                    { name: 'Apple Music', url: `https://music.apple.com/search?term=${query}`, color: 'hover:bg-[#FA243C] hover:border-[#FA243C] hover:text-white' },
+                    { name: 'Qobuz', url: `https://www.qobuz.com/fr-fr/search?q=${query}`, color: 'hover:bg-[#000000] hover:border-[#000000] hover:text-white' },
+                    { name: 'Tidal', url: `https://listen.tidal.com/search?q=${query}`, color: 'hover:bg-[#000000] hover:border-[#000000] hover:text-white' }
+                ];
+            };
+
+            const streamingLinks = getSearchLinks(item.artist, item.album);
+
             return (
                 <div className="group">
                 <div 
@@ -1601,33 +1617,61 @@
                 {/* Détails (Accordéon) */}
                 <div className={`grid transition-all duration-500 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
                     <div className="overflow-hidden">
-                    <div className="p-6 md:pl-28 bg-zinc-50/50 border-x border-b border-zinc-100 mb-4">
-                        <div className="flex items-center gap-2 mb-4">
-                        <Star className="w-4 h-4 text-black fill-current" />
-                        <h4 className="text-xs font-bold uppercase tracking-widest">{t.mentions_label} ({item.mentions.length})</h4>
-                        </div>
+                    <div className="p-6 md:pl-28 bg-zinc-50/50 border-x border-b border-zinc-100 mb-4 space-y-8">
                         
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {item.mentions.map((m, idx) => (
-                            <a 
-                            key={idx} 
-                            href={m.sourceUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex justify-between items-center p-3 bg-white border border-zinc-100 hover:border-black transition-colors group/card"
-                            >
-                            <div className="flex flex-col">
-                                <span className="text-xs font-bold uppercase tracking-wide group-hover/card:underline decoration-1 underline-offset-2">
-                                {m.source} {FLAGS[m.country]}
-                                </span>
+                         {/* SECTION STREAMING */}
+                         <div>
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="p-1 bg-black rounded-full flex items-center justify-center">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="white" stroke="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                </div>
+                                <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500">{t.listen_label}</h4>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-sm font-mono font-black">#{m.rank}</span>
-                                <span className="text-[10px] font-bold bg-zinc-100 px-1.5 py-0.5 rounded text-zinc-500">+{m.scoreContrib} pts</span>
+                            <div className="flex flex-wrap gap-2">
+                                {streamingLinks.map((link) => (
+                                    <a 
+                                        key={link.name}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className={`px-4 py-2 bg-white border border-zinc-200 rounded-md text-xs font-bold uppercase tracking-wide transition-all ${link.color}`}
+                                    >
+                                        {link.name}
+                                    </a>
+                                ))}
                             </div>
-                            </a>
-                        ))}
                         </div>
+
+                        {/* SECTION SOURCES */}
+                        <div>
+                            <div className="flex items-center gap-2 mb-4">
+                            <Star className="w-4 h-4 text-black fill-current" />
+                            <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500">{t.mentions_label} ({item.mentions.length})</h4>
+                            </div>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {item.mentions.map((m, idx) => (
+                                <a 
+                                key={idx} 
+                                href={m.sourceUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="flex justify-between items-center p-3 bg-white border border-zinc-100 hover:border-black transition-colors group/card"
+                                >
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-bold uppercase tracking-wide group-hover/card:underline decoration-1 underline-offset-2">
+                                    {m.source} {FLAGS[m.country]}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm font-mono font-black">#{m.rank}</span>
+                                    <span className="text-[10px] font-bold bg-zinc-100 px-1.5 py-0.5 rounded text-zinc-500">+{m.scoreContrib} pts</span>
+                                </div>
+                                </a>
+                            ))}
+                            </div>
+                        </div>
+
                     </div>
                     </div>
                 </div>

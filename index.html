@@ -1,12 +1,23 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-QLP4TRYPYK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QLP4TRYPYK');
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- --- SEO & META DONNÉES --- -->
     <title>Top 50 des meilleurs albums 2025 | Le Méta-Classement Définitif</title>
-    <meta name="description" content="Découvrez le classement ultime des 50 meilleurs albums de 2025, agrégé à partir de 19 sources critiques majeures.">
+    <meta name="description" content="Découvrez le classement ultime des 50 meilleurs albums de 2025, agrégé à partir de 20 sources critiques majeures.">
     
     <!-- 1. Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,7 +39,8 @@
             background-color: #fcfcfc;
         }
         .quote-bg {
-            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1h2v2H1V1zm4 0h2v2H5V1zm4 0h2v2H9V1zm4 0h2v2h-2V1zm4 0h2v2h-2V1zm-8 4h2v2H9V5zm4 0h2v2h-2V5zm-8 4h2v2H5V9zm4 0h2v2H9V9zm4 0h2v2h-2V9zm-8 4h2v2H5v-2zm4 0h2v2H9v-2zm4 0h2v2h-2v-2z' fill='%23e5e7eb' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-color: #fafafa;
+            border-left: 3px solid #000;
         }
     </style>
 </head>
@@ -56,82 +68,103 @@
         const Share2 = (props) => <IconBase {...props}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></IconBase>;
         const Quote = (props) => <IconBase {...props}><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/></IconBase>;
         const Tag = (props) => <IconBase {...props}><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l5 5c.39.39 1.024.39 1.414 0l7.172-7.172a2 2 0 0 0 0-1.414l-5-5z"/><path d="M6 6h.01"/></IconBase>;
+        const Check = (props) => <IconBase {...props}><polyline points="20 6 9 17 4 12"/></IconBase>;
+        const Copy = (props) => <IconBase {...props}><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></IconBase>;
+        const TwitterX = (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>;
+        const Facebook = (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036c-2.148 0-2.971 1.022-2.971 2.93v1.041h3.753l-.521 3.667h-3.232v7.98H9.101Z"/></svg>;
+        const Linkedin = (props) => <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>;
 
 
-        // --- DONNÉES ENRICHIES (STYLES & CITATIONS) ---
-        // Cette base de données permet d'ajouter la couche "éditoriale" demandée
+        // --- CONFIGURATION ---
+        const FLAGS = {
+            US: "🇺🇸",
+            UK: "🇬🇧",
+            FR: "🇫🇷",
+            CAN: "🇨🇦",
+            BEL: "🇧🇪"
+        };
+
+        // --- ENRICHISSEMENT DES DONNÉES (Manual Curation from User Prompts) ---
         const ALBUM_METADATA = {
             "geese-gettingkilled": {
                 genre: "Post-Punk / Art Rock",
                 quotes: [
-                    { source: "NME", text: "A rare, unpredictable record that comes with such melody in the madness, control in the chaos. It’s a total thrill." },
-                    { source: "Stereogum", text: "A wonder, an unpredictable and passionate and dangerous piece of guitar music that resists algorithmic tyranny." }
+                    { source: "Stereogum", text: "A wonder, an unpredictable and passionate piece of guitar music that resists algorithmic tyranny." },
+                    { source: "Consequence", text: "It sounds simple, but it feels revolutionary. Geese wrote some damn fine songs and dressed them up flawlessly." },
+                    { source: "The Line of Best Fit", text: "A kiss of life for American band music. Getting Killed offers doom an incredible sense of grace." }
                 ]
             },
-            "rosalia-lux": {
+             "rosalia-lux": {
                 genre: "Art Pop / Orchestral",
                 quotes: [
-                    { source: "Rolling Stone", text: "Rosalía draws from the greats but goes for Mozart with baddie energy, Bach with a blunt in the mouth." },
-                    { source: "The Guardian", text: "What elevates it is the playfulness at its heart. Like Björk during her effortless 90s peak, there’s a sense of wonderment." }
+                    { source: "The Guardian", text: "Like Björk during her effortless 90s peak, there’s a sense of wonderment to Rosalía’s voice." },
+                    { source: "Consequence", text: "An orchestral pop album worthy of an orchestra. LUX is a religious album that wasn’t made for religious people." },
+                    { source: "Exclaim", text: "Rosalía forges a modern gospel, full of melodrama, unabashed heartbreak, and an ode to divine womanhood." }
                 ]
             },
-             "fkatwigs-eusexua": {
+            "fkatwigs-eusexua": {
                 genre: "Electronic / Avant-Pop",
                 quotes: [
+                    { source: "NME", text: "Unfurls like a scroll of holy doctrine proclaiming the communal power of the dancefloor." },
                     { source: "Consequence", text: "Twigs' obsession with timbre, tone, contrast, and physicalization reaches a palpable peak." },
-                    { source: "NME", text: "Unfurls like a scroll of holy doctrine proclaiming the communal power of the dancefloor." }
+                    { source: "Slant", text: "Eusexua presents someone learning to find strength in near-constant movement." }
                 ]
             },
-            "clipse-letgodsortemout": {
+             "clipse-letgodsortemout": {
                 genre: "Hip-Hop",
                 quotes: [
                     { source: "Rolling Stone", text: "Pusha T and Malice are still the ice-cold lyrical kingpins you remember." },
-                    { source: "Treble", text: "Devil and angel, one corrupting the other while the other redeems the first. Brothers on different paths, united by love." }
+                    { source: "Treble", text: "Devil and angel, one corrupting the other while the other redeems the first. Brothers on different paths, united by love." },
+                    { source: "The Fader", text: "Clipse brought back the art of the spectacle... earnest meditations on the allure and danger of being driven by one’s vices." }
                 ]
             },
-            "deafheaven-lonelypeoplewithpower": {
+             "deafheaven-lonelypeoplewithpower": {
                 genre: "Blackgaze / Metal",
                 quotes: [
                     { source: "Slant", text: "Fierce and focused... stands as Deafheaven’s most vital release since 2013’s Sunbather." },
-                    { source: "Treble", text: "Doubling down on an identity it took a decade to fully understand. This is where Deafheaven fully arrives." }
+                    { source: "Treble", text: "Doubling down on an identity it took a decade to fully understand. This is where Deafheaven fully arrives." },
+                    { source: "Goûte mes disques", text: "Le plus grand fuck jamais adressé à l'étroitesse d'esprit, une ode à la musique libre de tous ses mouvements." }
                 ]
             },
             "dijon-baby": {
                 genre: "Alt-R&B / Experimental",
                 quotes: [
+                    { source: "The Fader", text: "The Los Angeles alt-heartthrob’s most unraveled, life-pulsing music ever... feels like everything’s going to fling apart." },
                     { source: "Pitchfork", text: "It’s pure, sincere chaos, and it’s beautiful. Sounds like if Prince fronted Pavement." },
-                    { source: "Exclaim", text: "A fractured love letter to alt-R&B from an artist who plays a vital role in shaping its sound." }
+                    { source: "Goûte mes disques", text: "Un disque délicieusement imparfait dans son exploration de la paternité, rempli de lumière et de chaleur humaine." }
                 ]
             },
             "badbunny-debitirarmasfotos": {
                 genre: "Reggaeton / Latin",
                 quotes: [
                     { source: "Rolling Stone", text: "It could be heard on the streets of New York, San Juan, and beyond. A masterwork by an artist at the peak of his powers." },
-                    { source: "Fader", text: "Zeroes in on his home island... A snapshot of Bad Bunny's artistry and impact as a global pop star." }
+                    { source: "Slant", text: "Bracing in its wistfulness... mourns the opportunity to preserve the memory of his native Puerto Rico." }
                 ]
             },
             "oklou-chokeenough": {
                 genre: "Ethereal Pop",
                 quotes: [
                     { source: "Crack", text: "A balm for our obliterated attention spans and a call to embrace the soft, twilit corners of imagination." },
-                    { source: "NME", text: "Refreshing and spellbinding in its quietude. Akin to feeling a sudden gust of clean air in a windowless room." }
+                    { source: "NME", text: "Refreshing and spellbinding in its quietude. Akin to feeling a sudden gust of clean air in a windowless room." },
+                    { source: "Slant", text: "Exists in a strange, beautiful in-between space... This is an album that rewards curiosity." }
                 ]
             },
             "wednesday-bleeds": {
                 genre: "Country-Gaze / Indie Rock",
                 quotes: [
                     { source: "Stereogum", text: "Spellbound by the grotesque, charmed by misfortune, empathetic to the broken." },
-                    { source: "Exclaim", text: "An unstoppable force, Bleeds sinks its teeth into you and won't let go." }
+                    { source: "Le Canal Auditif", text: "Wednesday déploie un autre album franchement réussi... Bleeds, c’est du solide." },
+                    { source: "Consequence", text: "A stellar set of songs that doubles as a great short-story collection." }
                 ]
             },
              "cmat-eurocountry": {
                 genre: "Country Pop",
                 quotes: [
                     { source: "NME", text: "At turns hilarious, devastating, rageful and proud... shows the magic that can happen when an artist is given space." },
-                    { source: "The Guardian", text: "Poignant, moving, furiously angry, uproariously funny and packed with incredible tunes." }
+                    { source: "Slant", text: "Turning introspection into lacerating wit... among the most aesthetically unique pop albums of the year." }
                 ]
             },
-            "sudanarchives-thebpm": {
+             "sudanarchives-thebpm": {
                 genre: "Electronic / R&B",
                 quotes: [
                     { source: "Fader", text: "This astonishing, pathos-drenched dance record is an ode to inner conflict, catharsis, and the savory, snug loneliness." },
@@ -149,7 +182,8 @@
                 genre: "Abstract Hip-Hop",
                 quotes: [
                     { source: "The Guardian", text: "A rap masterpiece that works both as stunning poetry on the page and thrilling music out of loudspeakers." },
-                    { source: "Treble", text: "Bleak but thoroughly realist storytelling... sometimes we need art that barely hints at the possibility of happy endings." }
+                    { source: "Treble", text: "Bleak but thoroughly realist storytelling... sometimes we need art that barely hints at the possibility of happy endings." },
+                    { source: "Goûte mes disques", text: "Ce disque est un dédale... évoque la paranoïa d’une Amérique post 11/09 malade de son impérialisme." }
                 ]
             },
             "boniver-sablefable": {
@@ -159,21 +193,104 @@
                     { source: "The Guardian", text: "A beautiful redemption arc... blossoms into a radiant appreciation of possibility, sensuality, risk." }
                 ]
             },
-            "bloodorange-essexhoney": {
+             "bloodorange-essexhoney": {
                 genre: "R&B / Alternative",
                 quotes: [
                     { source: "NME", text: "Channels the loss of his mother into shimmering orchestral pop that traces his return to the London suburbs." },
-                    { source: "Crack", text: "Captures that last hazy summer before leaving your hometown, and the marks it leaves behind." }
+                    { source: "The Fader", text: "A deceptive album about grief. Written after the passing of his mother and reconnecting with his hometown." }
                 ]
             },
-            "thearmed-thefutureishere": {
+             "thearmed-thefutureishere": {
                 genre: "Hardcore / Post-Punk",
                 quotes: [
                     { source: "Treble", text: "Reassert why they are the most exciting hardcore-adjacent band of the past 15 years." },
                     { source: "Exclaim", text: "An explosive outburst of vitriolic rage at the terrible dystopian situation we seem to be hurtling towards." }
                 ]
+            },
+             "tyler-thecreator-donttaptheglass": {
+                genre: "Hip-Hop",
+                quotes: [
+                    { source: "The Fader", text: "Determined to inspire intimacy and reconnection with community away from our screens... a surprise social experiment." },
+                    { source: "Stereogum", text: "A giddy blast of '80s funk bass-squelches... combines the sonic scope of Tyler's recent work with dizzy energy." }
+                ]
+            },
+            "pinkpantheress-fancythat": {
+                 genre: "D&B / Pop",
+                 quotes: [
+                     { source: "Consequence", text: "The most self-assured, energized, and indelible music of her career. Her storytelling abilities have strengthened." },
+                     { source: "Exclaim", text: "Each replay unveils a new hidden gem, making Fancy That the hazy club set you could stay up and dance to forever." }
+                 ]
+            },
+            "turnstile-neverenough": {
+                genre: "Hardcore / Rock",
+                quotes: [
+                    { source: "Consequence", text: "Turnstile haven't taken their foot off the gas... cement Turnstile as a force, turning them into torchbearers." },
+                    { source: "Goûte mes disques", text: "Ça y est, Turnstile n’est plus (vraiment) un groupe de hardcore... ce disque ressemble vraiment au crime parfait." }
+                ]
+            },
+             "perfumegenius-glory": {
+                genre: "Art Pop",
+                quotes: [
+                    { source: "Slant", text: "Delivers tactile poetry and pained self-examinations, extracting catharsis from isolation and anxiety." },
+                    { source: "The Line of Best Fit", text: "Yanks at the fabric of Hollywood redemption arcs... caught between doubt and devotion; between beauty and violence." }
+                ]
+            },
+             "smerz-bigcitylife": {
+                genre: "Electronic / Pop",
+                quotes: [
+                    { source: "Stereogum", text: "Smerz teach us how to go out again... Real party girls never dominate the mix." },
+                    { source: "The Fader", text: "Music that mines the mundane for its cosmic potential, from a night of drunken frivolity to loving leisure." }
+                ]
+            },
+            "jimlegxacy-blackbritishmusic": {
+                 genre: "Hip-Hop / Emo-Rap",
+                 quotes: [
+                     { source: "The Fader", text: "Paramore-esque melodies, Drake-in-his-prime hooks... a vivid audio thesis on Black British identity." },
+                     { source: "The Line of Best Fit", text: "Creates a mould only he fit into with biographical lyricism that put emotional vulnerability front and centre." }
+                 ]
+            },
+            "losthuthanaka-losthuthanaka": {
+                genre: "Experimental / Latin",
+                quotes: [
+                    { source: "Slant", text: "A thrilling collision of ancestral tradition, musical experimentation, and queer identity... breathtaking." },
+                    { source: "Crack", text: "Vibrates with Indigenous ancestral knowledge, channelled through a glitchy synthesiser. A quietly raging storm." }
+                ]
+            },
+            "swans-birthing": {
+                genre: "Experimental Rock",
+                quotes: [
+                    { source: "Slant", text: "Swans approaches something closer in spirit to free jazz than rock music... astonishingly vital 17 albums into their career." },
+                    { source: "Goûte mes disques", text: "Coche toutes les cases de l’oraison funèbre... passe de l’immersion à l’apesanteur, du chaos au sublime." }
+                ]
+            },
+             "cameronwinter-heavymetal": {
+                genre: "Singer-Songwriter",
+                quotes: [
+                    { source: "Slant", text: "Stripped-back, strange, and deeply intimate... a bluesy lo-fi odyssey of unruly emotion and oddball wit." },
+                    { source: "Consequence", text: "Earnest neo-classical, folksy songwriting... It's anxious, explosive, beautiful, broken." }
+                ]
+            },
+            "annavonhausswolff-iconoclasts": {
+                genre: "Neoclassical Darkwave",
+                quotes: [
+                    { source: "The Line of Best Fit", text: "Lends ethereal hues to the pop canvas and renders stories of heartbreak, mania, forgiveness and rebirth." },
+                    { source: "The Guardian", text: "Grappling with mortality, transcendence and evil in a series of stormy epics." }
+                ]
+            },
+             "populationii-maintenantjamais": {
+                genre: "Psych Rock",
+                quotes: [
+                    { source: "Le Canal Auditif", text: "Le meilleur album de la formation à ce jour... les élèves ont certainement rattrapé le maître." },
+                    { source: "Exclaim", text: "Plays like a hallucinatory trip, with tracks merging into one another while providing unexpected twists and turns." }
+                ]
+            },
+             "louadrianecassidy-journaldunloupgarou": {
+                genre: "Chanson Rock",
+                quotes: [
+                     { source: "Le Canal Auditif", text: "Elle livre ici son meilleur album en carrière et une œuvre qui met la barre haute pour la suite de l’année." }
+                ]
             }
-            // (Note: La liste peut être étendue davantage, ici on couvre le top 15 pour l'exemple)
+
         };
 
         const GENRES = ["Tous", "Rock / Post-Punk", "Hip-Hop / Rap", "Pop / R&B", "Electronic", "Folk / Country", "Metal", "Experimental"];
@@ -189,14 +306,6 @@
         };
 
 
-        // --- CONFIGURATION ---
-        const FLAGS = {
-            US: "🇺🇸",
-            UK: "🇬🇧",
-            FR: "🇫🇷",
-            CAN: "🇨🇦"
-        };
-
         // --- TRADUCTIONS ---
         const TRANSLATIONS = {
             fr: {
@@ -205,7 +314,7 @@
                 method_title: "Méthodologie & Démarche",
                 method_text: (count) => (
                 <React.Fragment>
-                    Ce méta-classement agrège {count} sources critiques issues de divers pays (France, Canada, Royaume-Uni, États-Unis). Dans chaque Top-50, le 1er album reçoit 50 points, le second 49 points, etc. On agrège ensuite le total.
+                    Ce méta-classement agrège {count} sources critiques issues de divers pays (France, Canada, Royaume-Uni, États-Unis, Belgique). Dans chaque Top-50, le 1er album reçoit 50 points, le second 49 points, etc. On agrège ensuite le total.
                     <br/><br/>
                     Bien que l'approche soit quantitative, ce résultat repose sur l'évaluation humaine de journalistes et passionnés, une valeur inestimable à l'ère de l'Intelligence Artificielle. Ce classement reflète nécessairement les biais culturels et éditoriaux des médias sélectionnés. Nous vous encourageons vivement à visiter leurs sites pour découvrir leurs analyses complètes. Si le cœur vous en dit, et le portefeuille le permet, soutenez-les financièrement.
                 </React.Fragment>
@@ -239,7 +348,7 @@
                 method_title: "Methodology & Approach",
                 method_text: (count) => (
                 <React.Fragment>
-                    This meta-ranking aggregates {count} critical sources from various countries (France, Canada, UK, USA). In each Top-50, the 1st album receives 50 points, the 2nd 49 points, etc. The totals are then aggregated.
+                    This meta-ranking aggregates {count} critical sources from various countries (France, Canada, UK, USA, Belgium). In each Top-50, the 1st album receives 50 points, the 2nd 49 points, etc. The totals are then aggregated.
                     <br/><br/>
                     Although the approach is quantitative, this result relies on the human evaluation of journalists and enthusiasts—an invaluable asset in the age of Artificial Intelligence. This ranking necessarily reflects the cultural and editorial biases of the selected media. We strongly encourage you to visit their sites to discover their full analyses. If you are willing and able, please support them financially.
                 </React.Fragment>
@@ -1314,6 +1423,31 @@
                     { rank: 48, artist: "pas de signal", album: "13h07" },
                     { rank: 49, artist: "Théodora", album: "MEGA BBL" },
                     { rank: 50, artist: "Perséide", album: "Passages secrets" }
+                ]
+            },
+            {
+                id: 20, source: "Goûte mes disques", country: "BEL", url: "https://www.goutemesdisques.com/dossiers/id/2025-en-20-albums/", weight: 50,
+                data: [
+                    { rank: 1, artist: "billy woods", album: "GOLLIWOG" },
+                    { rank: 2, artist: "Ptite Soeur, Femtogo et neophron", album: "PRETTY DOLLCORPSE" },
+                    { rank: 3, artist: "Sanguisugabogg", album: "Hideous Aftermath" },
+                    { rank: 4, artist: "Joe Armon-Jones", album: "All The Quiet Pt. 1 & 2" },
+                    { rank: 5, artist: "Deafheaven", album: "Lonely People With Power" },
+                    { rank: 6, artist: "Panda Bear", album: "Sinister Grift" },
+                    { rank: 7, artist: "Myd", album: "Mydnight" },
+                    { rank: 8, artist: "caroline", album: "caroline 2" },
+                    { rank: 9, artist: "TH", album: "Algorithme" },
+                    { rank: 10, artist: "Ghost", album: "Skeleta" },
+                    { rank: 11, artist: "Justin Bieber", album: "Swag" },
+                    { rank: 12, artist: "Ancient Death", album: "Ego Dissolution" },
+                    { rank: 13, artist: "Swans", album: "Birthing" },
+                    { rank: 14, artist: "Jeff Tweedy", album: "Twilight Override" },
+                    { rank: 15, artist: "Voices From The Lake", album: "II" },
+                    { rank: 16, artist: "Turnstile", album: "Never Enough" },
+                    { rank: 17, artist: "Ata Kak", album: "Batakari" },
+                    { rank: 18, artist: "​​TTSSFU", album: "Blown" },
+                    { rank: 19, artist: "Dijon", album: "Baby" },
+                    { rank: 20, artist: "Primitive Man", album: "Observance" }
                 ]
             }
         ];
